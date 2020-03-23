@@ -1,0 +1,40 @@
+
+class CustomException implements Exception {
+  final _message;
+  final _prefix;
+
+  CustomException([this._message, this._prefix]);
+
+  String toString() {
+    return "$_prefix$_message";
+  }
+}
+
+class FetchDataException extends CustomException {
+  FetchDataException([String message])
+      : super(message, "Error During Communication: ");
+}
+
+// 400
+class BadRequestException extends CustomException {
+  BadRequestException([message]) : super(message, "Invalid Request: ");
+}
+
+// 401
+class UnauthenticatedException extends CustomException {
+  UnauthenticatedException([message]) : super(message, "Authentication requested");
+}
+
+// 403
+class UnauthorisedException extends CustomException {
+  UnauthorisedException([message]) : super(message, "Not granted on resource");
+}
+
+// 409
+class ConflictException extends CustomException {
+  ConflictException([message]) : super(message, "Conflict on resource");
+}
+
+class InvalidInputException extends CustomException {
+  InvalidInputException([String message]) : super(message, "Invalid Input: ");
+}
