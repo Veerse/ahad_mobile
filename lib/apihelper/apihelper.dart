@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:convert';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:ahadmobile/apihelper/customexception.dart';
@@ -10,19 +11,25 @@ class APIHelper {
   // 10.0.2.2 on Android, localhost on iOS
   final String _baseURI = "http://10.0.2.2:8095";
 
-  static String _JWTcookie;
+  final storage = new FlutterSecureStorage();
 
   Future<dynamic> request(String resource, RequestType requestType, [reqBody]) async {
+
+    var jwtCookie = await storage.read(key: "jwt");
+    print("jwt token inside helper is $jwtCookie");
+    print("reqbody is ${reqBody}");
+
     var responseJSON;
     try {
       http.Response response;
       switch (requestType) {
         case RequestType.GET:
-          response = await http.get(_baseURI + resource, headers: {HttpHeaders.cookieHeader:"$_JWTcookie"});
+          response = await http.get(_baseURI + resource, headers: {HttpHeaders.cookieHeader:"$jwtCookie"});
+          updateCookie(response);
           break;
         case RequestType.POST:
           print("body: ${json.encode(reqBody)}");
-          response = await http.post(_baseURI + resource, headers: {HttpHeaders.contentTypeHeader:"application/json"}, body: json.encode(reqBody));
+          response = await http.post(_baseURI + resource, headers: {HttpHeaders.contentTypeHeader:"application/json", HttpHeaders.cookieHeader:new Cookie("ahad_token", jwtCookie).toString()}, body: json.encode(reqBody));
           updateCookie(response);
           break;
         case RequestType.PUT:
@@ -61,9 +68,10 @@ class APIHelper {
   }
 
   void updateCookie(http.Response response) {
-    if(response.headers['set-cookie'] != ""){
-      _JWTcookie = response.headers['set-cookie'];
-      print(_JWTcookie);
+    if(response.headers['set-cookie'] != null){
+      var responseCookie = response.headers['set-cookie'];
+      storage.delete(key: "ahad_token");
+      storage.write(key: "ahad_token", value: responseCookie);
     }
     /*if (rawCookie != null) {
       int index = rawCookie.indexOf(';');

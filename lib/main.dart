@@ -1,9 +1,17 @@
 import 'package:ahadmobile/common/theme.dart';
-import 'package:ahadmobile/providers/UserModer.dart';
+import 'package:ahadmobile/models/User.dart';
+import 'package:ahadmobile/providers/UserModel.dart';
+import 'package:ahadmobile/repository/UserRepository.dart';
+import 'package:ahadmobile/ui/HomePage.dart';
+import 'package:ahadmobile/ui/LoadingPage.dart';
+import 'package:ahadmobile/ui/LoginPage.dart';
+import 'package:ahadmobile/ui/OnboardingPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -11,58 +19,71 @@ void main() {
     DeviceOrientation.portraitUp
   ]).then((_){
     runApp(
-      MultiProvider(
-        providers: [
-          Provider(create: (context) => UserModel())
-        ],
-        child: MyApp(),
-      )
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (context) => UserModel())
+          ],
+          child: MyApp(),
+        )
     );
   });
 }
 
 class MyApp extends StatelessWidget {
-
   final storage = new FlutterSecureStorage();
 
-  Future<bool> authenticationCheck () async {
-    var v = await storage.read(key: "jwt").then((onValue){
-      if (onValue == null) {
-        return false;
-      }
-      print('ok $onValue');
-      return true;
-    }).catchError((err){
-      throw err;
-    });
-    return v;
+  Future <Widget> authenticationCheck (BuildContext context) async {
+    storage.write(key: "jwt", value: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwidXNlcl90eXBlIjowLCJleHAiOjE1ODUxNzI4NzN9.5AjXzcqmMnF5-O39Soq78ly6jj5xcjP6gR7laVJYLxY");
+    storage.write(key: "userid", value: "4");
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove("onboarding");
+    if (!prefs.containsKey("onboarding")){
+      // prefs.setBool("onboarding", true);
+      return OnBoardingPage();
+    }
+
+    var jwt = await storage.read(key: "jwt").catchError((err){throw err;});
+    var userId = await storage.read(key: "userid").catchError((err){throw err;});
+
+    if (jwt != null && userId != null){
+      User u = await UserRepository().JWTSignIn().catchError((err){
+        if (jwt != null){storage.delete(key: "jwt");}
+        if (userId != null) {storage.delete(key: "userid");}
+        throw err;
+      });
+      Provider.of<UserModel>(context, listen: false).logIn(u);
+      return HomePage();
+    } else {
+      if (jwt != null){storage.delete(key: "jwt");}
+      if (userId != null) {storage.delete(key: "userid");}
+      throw("Token or userid not found");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    //storage.write(key: "jwt", value: "mykey");
-
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Ahad',
       theme: appTheme,
       darkTheme: ThemeData.dark(),
+      routes: {
+        '/login': (context) => LoginPage(),
+        '/home': (context) => HomePage(),
+      },
+      // The home depends on if the user is logged or not
       home: FutureBuilder(
-        future: authenticationCheck(),
-        builder: (context, snapshot){
+        future: authenticationCheck(context),
+        builder: (context, snapshot) {
+          if (snapshot.hasData){
+            return snapshot.data; // OnboardingPage or HomePage
+          }
           if (snapshot.hasError){
-            print('pb cosmologique');
+            print('Error caught on app startup : ${snapshot.error.toString()}');
             return LoginPage();
           }
-          if (snapshot.hasData){
-            print('la val est ${snapshot.data.toString()}');
-            if (snapshot.data == true){
-              return Home();
-            } else {
-              return LoginPage();
-            }
-          }
           else {
-            return Text('pb intercosmique');
+            return LoadingPage();
           }
         },
       ),
@@ -70,24 +91,9 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class Home extends StatelessWidget{
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('My app'),
-      ),
-      body: Center(
-        child: Text('yod'),
-      ),
-    );
-  }
-}
 
-class LoginPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Text('log in first please');
-  }
 
-}
+
+
+
+
