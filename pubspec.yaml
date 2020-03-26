@@ -56,7 +56,11 @@ flutter:
   #  - images/a_dot_ham.jpeg
 
   assets:
-    - ./images/search.png
+    - assets/images/onboarding/welcome.png
+    - assets/images/onboarding/search.png
+    - assets/images/onboarding/favorite.png
+    - assets/images/onboarding/lost.png
+    - assets/images/onboarding/go.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

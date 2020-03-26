@@ -6,36 +6,68 @@ class OnBoardingPage extends StatelessWidget {
 
   var listPagesViewModel = <PageViewModel>[
     PageViewModel(
-      title: "Welcome to Ahad",
+      title: "Welcome to MUSLIMY",
       bodyWidget: Column(
         children: <Widget>[
-          Text('It\'s like Spotify, but bot Islamic audios :-)')
+          Text('It\'s like Spotify, but for Islamic audios 🙃')
         ],
       ),
       image: Center(
-        child: Image.network("https://i.picsum.photos/id/2/200/200.jpg", height: 175.0),
+        child: Image.asset("assets/images/onboarding/welcome.png", height: 250.0)
       ),
     ),
     PageViewModel(
-      title: "Title of first page",
+      title: "Search for all types of audio",
+      image: Center(
+          child: Image.asset("assets/images/onboarding/search.png", height: 250.0)
+      ),
+      bodyWidget: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: const [
+          Text("Khutbas, dourous, conferences, courses..."),
+        ],
+      ),
+    ),
+    PageViewModel(
+      title: "Add imams and themes to your favorites",
+      image: Center(
+          child: Image.asset("assets/images/onboarding/favorite.png", height: 250.0)
+      ),
+      bodyWidget: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: const [
+          Text("By clicking the "),
+          Icon(Icons.favorite_border),
+          Text(" icon"),
+        ],
+      ),
+    ),
+    PageViewModel(
+      title: "No idea of what to listen to ?",
+      image: Center(
+          child: Image.asset("assets/images/onboarding/lost.png", height: 250.0)
+      ),
       bodyWidget: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: const [
           Text("Click on "),
-          Icon(Icons.edit),
-          Text(" to edit a post"),
+          Icon(Icons.explore),
+          Text(" to explore new content"),
         ],
       ),
-      image: const Center(child: Icon(Icons.android))
     ),
     PageViewModel(
-      title: "Title of first page",
-      body: "Here you can write the description of the page, to explain someting...",
-      image: Center(child: Image.asset("res/images/logo.png", height: 175.0)),
-      decoration: const PageDecoration(
-        pageColor: Colors.blue,
+      title: "Let's go",
+      image: Center(
+          child: Image.asset("assets/images/onboarding/go.png", height: 250.0)
       ),
-    )
+      bodyWidget: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text('You are ready to go now')
+        ],
+      )
+    ),
   ];
 
   @override
@@ -46,9 +78,8 @@ class OnBoardingPage extends StatelessWidget {
         Navigator.pushNamed(context, "/login");
       },
       showSkipButton: true,
-      skip: const Icon(Icons.skip_next),
-      next: const Icon(Icons.navigate_next),
-      done: const Text("Done", style: TextStyle(fontWeight: FontWeight.w600)),
+      skip: const Text('Passer', style: TextStyle(fontWeight: FontWeight.w600)),
+      done: const Text('C\'est parti', style: TextStyle(fontWeight: FontWeight.w600)),
       dotsDecorator: DotsDecorator(
           size: const Size.square(10.0),
           activeSize: const Size(20.0, 10.0),
