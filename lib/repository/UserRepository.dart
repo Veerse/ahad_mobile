@@ -18,4 +18,9 @@ class UserRepository {
     var response = await APIHelper().request("/jwtsignin", RequestType.POST, u.toJson());
     return User.fromJson(response);
   }
+
+  Future <User> EmailSignIn (String email, String password) async {
+    final User u = new User(email: email, pwd: password);
+    print('logging user ${u.toString()}');
+  }
 }

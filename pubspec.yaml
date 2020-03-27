@@ -29,6 +29,7 @@ dependencies:
   shared_preferences: ^0.5.6+3
   # To build onboarding screens
   introduction_screen: ^1.0.8
+  keyboard_visibility: ^0.5.6
   provider: ^4.0.4
   http: ^0.12.0+4
   flutter_spinkit: ^4.1.2
@@ -61,6 +62,9 @@ flutter:
     - assets/images/onboarding/favorite.png
     - assets/images/onboarding/lost.png
     - assets/images/onboarding/go.png
+    - assets/images/login/lantern.png
+    - assets/images/register/muslim_man.png
+    - assets/images/register/muslim_woman.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

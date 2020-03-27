@@ -17,7 +17,7 @@ class APIHelper {
 
     var jwtCookie = await storage.read(key: "jwt");
     print("jwt token inside helper is $jwtCookie");
-    print("reqbody is ${reqBody}");
+    print("reqbody is $reqBody");
 
     var responseJSON;
     try {
