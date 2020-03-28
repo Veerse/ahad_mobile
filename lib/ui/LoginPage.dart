@@ -1,5 +1,10 @@
 
+import 'package:ahadmobile/providers/UserModel.dart';
+import 'package:ahadmobile/repository/UserRepository.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget{
   @override
@@ -9,6 +14,8 @@ class LoginPage extends StatefulWidget{
 
 class LoginPageState extends State<LoginPage> {
   final globalKey = GlobalKey<ScaffoldState>();
+
+  final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
 
   final _emailController = TextEditingController();
   final _pwdController = TextEditingController();
@@ -20,6 +27,8 @@ class LoginPageState extends State<LoginPage> {
 
   bool _emailHasFocus = false;
   bool _pwdHasFocus = false;
+
+  bool _isLoading = false;
 
   @protected
   void initState() {
@@ -57,50 +66,66 @@ class LoginPageState extends State<LoginPage> {
               keyboardIsVisible() ? Container():LoginPageHeader(),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 32),
-                child: Column(
-                  children: <Widget>[
-                    TextFormField(
-                      decoration: InputDecoration(
-                        labelText: 'E-mail',
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
-                      ),
-                      enableSuggestions: false,
-                      textInputAction: TextInputAction.next,
-                      onFieldSubmitted: (_){
-                        _emailFocus.unfocus();
-                        FocusScope.of(context).requestFocus(_pwdFocus);
-                      },
-                      controller: _emailController,
-                      focusNode: _emailFocus,
-                      keyboardType: TextInputType.emailAddress,
-                    ),
-                    SizedBox(height: 16),
-                    TextFormField(
-
-                      decoration: InputDecoration(
-                        suffixIcon: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _pwdIsVisible = !_pwdIsVisible;
-                            });
-                          },
-                          child: Icon(_pwdIsVisible ? Icons.visibility_off:Icons.visibility),
+                child: FormBuilder(
+                  key: _fbKey,
+                  child: Column(
+                    children: <Widget>[
+                      FormBuilderTextField(
+                        readOnly: _isLoading ? true:false,
+                        attribute: "email",
+                        decoration: InputDecoration(
+                          labelText: 'E-mail',
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
                         ),
-                        labelText: 'Mot de passe',
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+                        textInputAction: TextInputAction.next,
+                        onFieldSubmitted: (_){
+                          _emailFocus.unfocus();
+                          FocusScope.of(context).requestFocus(_pwdFocus);
+                        },
+                        controller: _emailController,
+                        focusNode: _emailFocus,
+                        keyboardType: TextInputType.emailAddress,
+                        validators: [
+                          FormBuilderValidators.required(errorText: "Requis"),
+                          FormBuilderValidators.email(errorText: "Doit etre une adresse mail")
+                        ],
                       ),
-                      enableSuggestions: false,
-                      obscureText: _pwdIsVisible,
-                      textInputAction: TextInputAction.done,
-                      onFieldSubmitted: (_){_pwdFocus.unfocus();},
-                      controller: _pwdController,
-                      focusNode: _pwdFocus,
-                    ),
-                  ],
+                      SizedBox(height: 16),
+                      FormBuilderTextField(
+                        readOnly: _isLoading ? true:false,
+                        attribute: "pwd",
+                        decoration: InputDecoration(
+                          suffixIcon: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _pwdIsVisible = !_pwdIsVisible;
+                              });
+                            },
+                            child: Icon(!_pwdIsVisible ? Icons.visibility_off:Icons.visibility),
+                          ),
+                          labelText: 'Mot de passe',
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+                        ),
+                        obscureText: !_pwdIsVisible,
+                        maxLines: 1, // To allow obscuring password (maybe a bug ?)
+                        textInputAction: TextInputAction.done,
+                        onFieldSubmitted: (_){_pwdFocus.unfocus();},
+                        controller: _pwdController,
+                        focusNode: _pwdFocus,
+                        validators: [
+                          FormBuilderValidators.required(errorText: "Requis BATARD")
+                        ],
+                      )
+                    ],
+                  ),
                 ),
               ),
               SizedBox(height: 32),
-              SizedBox(
+              _isLoading ?
+              SpinKitFoldingCube(
+                color: Colors.lightGreen,
+                size: 32.0,
+              ):SizedBox(
                 width: 128,
                 child: RaisedButton(
                   color: Theme.of(context).canvasColor,
@@ -110,24 +135,57 @@ class LoginPageState extends State<LoginPage> {
                   ),
                   elevation: 4,
                   onPressed: (){
-                    print('snackbared!!');
-                    final snackBar = SnackBar(
-                      backgroundColor: Theme.of(context).errorColor,
-                      content: Text('Impossible de joindre le serveur!'),
+                    FocusScope.of(context).unfocus();
+                    if(_fbKey.currentState.saveAndValidate()){
+                      setState(() {
+                        _isLoading = true;
+                      });
 
-                    );
+                      var email = _fbKey.currentState.value.values.elementAt(0).toString();
+                      var pwd = _fbKey.currentState.value.values.elementAt(1).toString();
 
-                    // Find the Scaffold in the widget tree and use
-                    // it to show a SnackBar.
-                    globalKey.currentState.showSnackBar(snackBar);
+                      UserRepository().EmailSignIn(email, pwd).then((u){
+                        // AUTH SUCCESS
+                        setState(() {
+                          _isLoading = !_isLoading;
+                        });
+                        Provider.of<UserModel>(context, listen: false).logIn(u);
+                        Navigator.pushNamed(context, "/home");
+                      }).catchError((e){
+                        // AUTH ERROR
+                        setState(() {
+                          _isLoading = !_isLoading;
+                        });
+                        print('error on login ${e.toString()}');
+                        if(e.toString().contains("422")){
+                          globalKey.currentState.showSnackBar(SnackBar(
+                            backgroundColor: Theme.of(context).errorColor,
+                            content: Text('Mot de passe ou login erroné 😬'),
+                          ));
+                        } else {
+                          globalKey.currentState.showSnackBar(SnackBar(
+                            backgroundColor: Theme.of(context).errorColor,
+                            content: Text('Impossible de joindre le serveur 😞'),
+                          ));
+                        }
+                      });
+                    } else {
+                      globalKey.currentState.showSnackBar(SnackBar(
+                        backgroundColor: Theme.of(context).hintColor,
+                        content: Text('Champs incorrects 😕'),
+                      ));
+                    }
                   },
                   child: Text('Connexion'),
                 ),
               ),
               SizedBox(height: 32),
-              Text('S\'inscrire'),
+              GestureDetector(
+                onTap: () => Navigator.pushNamed(context, "/register"),
+                child: Text('S\'inscrire'),
+              ),
               SizedBox(height: 32),
-              Text('Mot de pass oublié ?'),
+              Text('Mot de passe oublié ?'),
               SizedBox(height: keyboardIsVisible() ? 256:64)
             ],
           ),

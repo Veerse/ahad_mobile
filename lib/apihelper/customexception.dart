@@ -32,7 +32,7 @@ class UnauthorisedException extends CustomException {
 
 // 409
 class ConflictException extends CustomException {
-  ConflictException([message]) : super(message, "Conflict on resource");
+  ConflictException([message]) : super(message, "Conflict on resource: 409");
 }
 
 class InvalidInputException extends CustomException {

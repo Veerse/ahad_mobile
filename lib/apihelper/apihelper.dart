@@ -15,9 +15,10 @@ class APIHelper {
 
   Future<dynamic> request(String resource, RequestType requestType, [reqBody]) async {
 
+    storage.write(key: "jwt", value: "aze");
     var jwtCookie = await storage.read(key: "jwt");
-    print("jwt token inside helper is $jwtCookie");
-    print("reqbody is $reqBody");
+    //print("jwt token inside helper is $jwtCookie");
+    //print("Reqbody is $reqBody");
 
     var responseJSON;
     try {
@@ -28,7 +29,6 @@ class APIHelper {
           updateCookie(response);
           break;
         case RequestType.POST:
-          print("body: ${json.encode(reqBody)}");
           response = await http.post(_baseURI + resource, headers: {HttpHeaders.contentTypeHeader:"application/json", HttpHeaders.cookieHeader:new Cookie("ahad_token", jwtCookie).toString()}, body: json.encode(reqBody));
           updateCookie(response);
           break;
@@ -50,7 +50,6 @@ class APIHelper {
     switch (response.statusCode) {
       case 200:
         var responseJson = json.decode(utf8.decode(response.bodyBytes));
-        // print(responseJson);
         return responseJson;
       case 400:
         throw BadRequestException(response.body.toString());
