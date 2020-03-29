@@ -64,8 +64,9 @@ flutter:
     - assets/images/onboarding/lost.png
     - assets/images/onboarding/go.png
     - assets/images/login/lantern.png
-    - assets/images/register/muslim_man.png
-    - assets/images/register/muslim_woman.png
+    - assets/images/profile/muslim_man.png
+    - assets/images/profile/muslim_woman.png
+    - assets/images/profile/exit.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

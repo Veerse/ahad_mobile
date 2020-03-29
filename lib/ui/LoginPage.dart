@@ -141,8 +141,8 @@ class LoginPageState extends State<LoginPage> {
                         _isLoading = true;
                       });
 
-                      var email = _fbKey.currentState.value.values.elementAt(0).toString();
-                      var pwd = _fbKey.currentState.value.values.elementAt(1).toString();
+                      var email = _fbKey.currentState.value['email'].toString().trim();
+                      var pwd = _fbKey.currentState.value['pwd'].toString().trim();
 
                       UserRepository().EmailSignIn(email, pwd).then((u){
                         // AUTH SUCCESS
@@ -150,7 +150,7 @@ class LoginPageState extends State<LoginPage> {
                           _isLoading = !_isLoading;
                         });
                         Provider.of<UserModel>(context, listen: false).logIn(u);
-                        Navigator.pushNamed(context, "/home");
+                        Navigator.pushReplacementNamed(context, "/home");
                       }).catchError((e){
                         // AUTH ERROR
                         setState(() {

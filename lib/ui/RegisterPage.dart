@@ -1,5 +1,4 @@
 
-import 'package:ahadmobile/apihelper/customexception.dart';
 import 'package:ahadmobile/models/User.dart';
 import 'package:ahadmobile/providers/UserModel.dart';
 import 'package:ahadmobile/repository/UserRepository.dart';
@@ -7,8 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import 'package:provider/provider.dart';
 import 'package:provider/provider.dart';
 
 class RegisterPage extends StatefulWidget {

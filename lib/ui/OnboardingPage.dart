@@ -75,7 +75,7 @@ class OnBoardingPage extends StatelessWidget {
     return IntroductionScreen(
       pages: listPagesViewModel,
       onDone: () {
-        Navigator.pushNamed(context, "/login");
+        Navigator.pushReplacementNamed(context, "/login");
       },
       showSkipButton: true,
       skip: const Text('Passer', style: TextStyle(fontWeight: FontWeight.w600)),

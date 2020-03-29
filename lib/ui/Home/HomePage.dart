@@ -9,9 +9,15 @@ class HomePage extends StatelessWidget{
     return Scaffold(
       appBar: AppBar(
         title: Text('My app'),
+        actions: <Widget>[
+          IconButton(
+            onPressed: () => Navigator.pushNamed(context, '/profile'),
+            icon: Icon(Icons.account_circle),
+          )
+        ],
       ),
       body: Center(
-        child: Text('Welcome, ${Provider.of<UserModel>(context, listen: false).user.firstName}'),
+        child: Text('Welcome, ${Provider.of<UserModel>(context, listen: false).user.id}'),
       ),
     );
   }

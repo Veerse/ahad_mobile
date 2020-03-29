@@ -9,14 +9,15 @@ enum RequestType { GET, POST, PUT, DELETE }
 
 class APIHelper {
   // 10.0.2.2 on Android, localhost on iOS
-  final String _baseURI = "http://10.0.2.2:8095";
+  final String _baseURI = "http://93.6.197.182:8095";
 
   final storage = new FlutterSecureStorage();
 
   Future<dynamic> request(String resource, RequestType requestType, [reqBody]) async {
 
-    storage.write(key: "jwt", value: "aze");
-    var jwtCookie = await storage.read(key: "jwt");
+
+    var jwtCookie = await storage.read(key: "ahad_token");
+
     //print("jwt token inside helper is $jwtCookie");
     //print("Reqbody is $reqBody");
 
@@ -29,7 +30,7 @@ class APIHelper {
           updateCookie(response);
           break;
         case RequestType.POST:
-          response = await http.post(_baseURI + resource, headers: {HttpHeaders.contentTypeHeader:"application/json", HttpHeaders.cookieHeader:new Cookie("ahad_token", jwtCookie).toString()}, body: json.encode(reqBody));
+          response = await http.post(_baseURI + resource, headers: {HttpHeaders.contentTypeHeader:"application/json", HttpHeaders.cookieHeader: jwtCookie == null ? null:new Cookie("ahad_token", jwtCookie).toString()}, body: json.encode(reqBody));
           updateCookie(response);
           break;
         case RequestType.PUT:
@@ -66,16 +67,17 @@ class APIHelper {
     }
   }
 
-  void updateCookie(http.Response response) {
+  void updateCookie(http.Response response) async {
     if(response.headers['set-cookie'] != null){
-      var responseCookie = response.headers['set-cookie'];
+      var rawCookie = response.headers['set-cookie'];
+
+      int semicolon = rawCookie.indexOf(";");
+      int equal = rawCookie.indexOf("=");
+
+      var jwt = rawCookie.substring(equal+1, semicolon);
+
       storage.delete(key: "ahad_token");
-      storage.write(key: "ahad_token", value: responseCookie);
+      storage.write(key: "ahad_token", value: jwt);
     }
-    /*if (rawCookie != null) {
-      int index = rawCookie.indexOf(';');
-      headers['cookie'] =
-      (index == -1) ? rawCookie : rawCookie.substring(0, index);
-    }*/
   }
 }

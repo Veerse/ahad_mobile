@@ -44,7 +44,7 @@ class User {
     data['Id'] = this.id;
     data['FirstName'] = this.firstName;
     data['LastName'] = this.lastName;
-    data['Birth'] = this.birth.toUtc().toIso8601String();
+    data['Birth'] = data['Birth'] == null ? null:this.birth.toUtc().toIso8601String();
     data['Email'] = this.email;
     data['IsMale'] = this.isMale;
     data['Pwd'] = this.pwd;

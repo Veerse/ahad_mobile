@@ -12,8 +12,8 @@ class UserModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void logOut(){
-    this.user = null;
+  void wipeUser(){
+    this.user = new User();
     notifyListeners();
   }
 }
