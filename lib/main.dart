@@ -1,5 +1,7 @@
 import 'package:ahadmobile/common/theme.dart';
+import 'package:ahadmobile/models/Audio.dart';
 import 'package:ahadmobile/models/User.dart';
+import 'package:ahadmobile/providers/AudioModel.dart';
 import 'package:ahadmobile/providers/UserModel.dart';
 import 'package:ahadmobile/repository/UserRepository.dart';
 import 'package:ahadmobile/ui/Home/HomePage.dart';
@@ -22,7 +24,8 @@ void main() {
     runApp(
         MultiProvider(
           providers: [
-            ChangeNotifierProvider(create: (context) => UserModel())
+            ChangeNotifierProvider(create: (context) => AudioModel()),
+            ChangeNotifierProvider(create: (context) => UserModel()),
           ],
           child: MyApp(),
         )

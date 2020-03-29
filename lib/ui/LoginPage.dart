@@ -181,7 +181,7 @@ class LoginPageState extends State<LoginPage> {
               ),
               SizedBox(height: 32),
               GestureDetector(
-                onTap: () => Navigator.pushNamed(context, "/register"),
+                onTap: () => _isLoading ? null:Navigator.pushNamed(context, "/register"),
                 child: Text('S\'inscrire'),
               ),
               SizedBox(height: 32),

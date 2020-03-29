@@ -1,14 +1,48 @@
 
 import 'package:ahadmobile/providers/UserModel.dart';
+import 'package:ahadmobile/ui/Home/ExploreTab.dart';
+import 'package:ahadmobile/ui/Home/HomeTab.dart';
+import 'package:ahadmobile/ui/Home/LibraryTab.dart';
+import 'package:ahadmobile/ui/Home/SearchTab.dart';
+import 'package:bubble_bottom_bar/bubble_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class HomePage extends StatelessWidget{
+class HomePage extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => HomePageState();
+
+}
+
+class HomePageState extends State<HomePage> {
+
+  int _currentIndex = 0;
+
+  static List<Widget> _widgetOptions = <Widget>[
+    HomeTab(),
+    ExploreTab(),
+    LibraryTab(),
+    SearchTab()
+  ];
+
+  static List<String> _pagesName = <String>[
+    'Accueil',
+    'Explorer',
+    'Librairie',
+    'Rechercher'
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('My app'),
+        title: Text('Muslimy'),
         actions: <Widget>[
           IconButton(
             onPressed: () => Navigator.pushNamed(context, '/profile'),
@@ -16,8 +50,29 @@ class HomePage extends StatelessWidget{
           )
         ],
       ),
-      body: Center(
-        child: Text('Welcome, ${Provider.of<UserModel>(context, listen: false).user.id}'),
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 8),
+        child: _widgetOptions[_currentIndex],
+      ),
+      /*floatingActionButton: FloatingActionButton(
+        onPressed: (){},
+        child: Icon(Icons.play_arrow, size: 32),
+        //backgroundColor: Theme.of(context).primaryColor,
+      ),*/
+      bottomNavigationBar: BubbleBottomBar(
+          //fabLocation: BubbleBottomBarFabLocation.end, //new
+          opacity: .2,
+          backgroundColor: Theme.of(context).primaryColor,
+          currentIndex: _currentIndex,
+          onTap: _onItemTapped,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+          elevation: 8,
+          items: <BubbleBottomBarItem>[
+            BubbleBottomBarItem(backgroundColor: Colors.white, icon: Icon(Icons.home, color: Colors.white), title: Text(_pagesName[_currentIndex])),
+            BubbleBottomBarItem(backgroundColor: Colors.white, icon: Icon(Icons.explore, color: Colors.white), title: Text(_pagesName[_currentIndex])),
+            BubbleBottomBarItem(backgroundColor: Colors.white, icon: Icon(Icons.library_music, color: Colors.white), title: Text(_pagesName[_currentIndex])),
+            BubbleBottomBarItem(backgroundColor: Colors.white, icon: Icon(Icons.search, color: Colors.white), title: Text(_pagesName[_currentIndex])),
+          ]
       ),
     );
   }
