@@ -22,16 +22,28 @@ class AudioModel extends ChangeNotifier {
 
   bool _isPlaying = false;
 
+
   bool get isPlaying => _isPlaying;
 
-  void initializeAndPlay() async {
-    await audioPlayer.play("http://93.6.197.182:8095/audio/1/download", isLocal: false).then((v){
+  double _currentPosition;
+
+  double get getPosition => _currentPosition;
+
+  void initializeAndPlay(Audio a) async {
+    this.audio = a;
+
+    await audioPlayer.play("http://93.6.197.182:8095/audio/${a.id}/download", isLocal: false).then((v){
       print('Playing $v');
     }).catchError((e){
       print('error $e');
     });
 
     _isPlaying = true;
+
+    audioPlayer.onAudioPositionChanged.listen((Duration d)  {
+      _currentPosition = d.inMilliseconds.toDouble();
+      notifyListeners();
+    });
 
     var currentOs = Platform.operatingSystem;
 

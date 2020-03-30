@@ -44,7 +44,7 @@ class HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Muslimy'),
+        title: Text('Khutbatizer'),
         actions: <Widget>[
           IconButton(
             onPressed: () => Navigator.pushNamed(context, '/profile'),
@@ -65,16 +65,19 @@ class HomePageState extends State<HomePage> {
       ),*/
       floatingActionButton: Consumer<AudioModel>(
         builder: (context, audio, child){
-          switch (audio.audioPlayer.state ) {
-            case AudioPlayerState.PAUSED:
-              return Icon(Icons.pause);
-              break;
-            case AudioPlayerState.PLAYING:
-              return Icon(Icons.play_arrow);
-              break;
-            default:
-              return Text(audio.audioPlayer.state.toString());
-              break;
+          if (audio.audioPlayer.state != null){
+            return GestureDetector(
+              onLongPress: () => Navigator.pushNamed(context, '/player'),
+              child: FloatingActionButton(
+                onPressed: (){
+                  Provider.of<AudioModel>(context, listen: false).playOrPause();
+                },
+                child: Icon(audio.audioPlayer.state == AudioPlayerState.PLAYING ? Icons.play_arrow:Icons.pause, size: 32),
+                //backgroundColor: Theme.of(context).primaryColor,
+              ),
+            );
+          } else {
+            return Container();
           }
         },
       ),
