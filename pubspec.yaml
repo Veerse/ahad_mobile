@@ -35,6 +35,8 @@ dependencies:
   flutter_spinkit: ^4.1.2
   bubble_bottom_bar: ^1.2.0
   audioplayers: ^0.14.2
+  # For Android Notifications. iOS control center is handled in audioplayers plug-in
+  flutter_media_notification: ^1.2.6
 
   
 

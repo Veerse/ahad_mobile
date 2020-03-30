@@ -1,9 +1,11 @@
 
+import 'package:ahadmobile/providers/AudioModel.dart';
 import 'package:ahadmobile/providers/UserModel.dart';
 import 'package:ahadmobile/ui/Home/ExploreTab.dart';
 import 'package:ahadmobile/ui/Home/HomeTab.dart';
 import 'package:ahadmobile/ui/Home/LibraryTab.dart';
 import 'package:ahadmobile/ui/Home/SearchTab.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:bubble_bottom_bar/bubble_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -55,10 +57,27 @@ class HomePageState extends State<HomePage> {
         child: _widgetOptions[_currentIndex],
       ),
       /*floatingActionButton: FloatingActionButton(
-        onPressed: (){},
+        onPressed: (){
+          Navigator.pushNamed(context, '/player');
+        },
         child: Icon(Icons.play_arrow, size: 32),
         //backgroundColor: Theme.of(context).primaryColor,
       ),*/
+      floatingActionButton: Consumer<AudioModel>(
+        builder: (context, audio, child){
+          switch (audio.audioPlayer.state ) {
+            case AudioPlayerState.PAUSED:
+              return Icon(Icons.pause);
+              break;
+            case AudioPlayerState.PLAYING:
+              return Icon(Icons.play_arrow);
+              break;
+            default:
+              return Text(audio.audioPlayer.state.toString());
+              break;
+          }
+        },
+      ),
       bottomNavigationBar: BubbleBottomBar(
           //fabLocation: BubbleBottomBarFabLocation.end, //new
           opacity: .2,

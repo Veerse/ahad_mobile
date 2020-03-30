@@ -2,52 +2,84 @@
 import 'package:ahadmobile/models/Audio.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
+import 'dart:io' show Platform;
+
+import 'package:flutter_media_notification/flutter_media_notification.dart';
+
 
 class AudioModel extends ChangeNotifier {
-  Audio audio;
 
-  AudioPlayer audioPlayer = AudioPlayer();
+  Audio audio;
 
   Audio get getAudio => audio;
 
-  var audioUri = "http://93.6.197.182:8095/audio/1/download";
-
   void setAudio(Audio u) {
     this.audio = u;
-    //await _player.setUrl("http://93.6.197.182:8095/${u.id}/download", isLocal: false);
     notifyListeners();
   }
 
-  void play() async {
-    await audioPlayer.play("https://file-examples.com/wp-content/uploads/2017/11/file_example_MP3_1MG.mp3", isLocal: false).then((v){
+  AudioPlayer audioPlayer = AudioPlayer();
+
+  bool _isPlaying = false;
+
+  bool get isPlaying => _isPlaying;
+
+  void initializeAndPlay() async {
+    await audioPlayer.play("http://93.6.197.182:8095/audio/1/download", isLocal: false).then((v){
       print('Playing $v');
     }).catchError((e){
       print('error $e');
     });
 
+    _isPlaying = true;
 
+    var currentOs = Platform.operatingSystem;
 
-    audioPlayer.setNotification(
-      title: 'Test audio',
-      artist: 'The artist',
-      albumTitle: 'The album',
-      imageUrl: 'https://i.picsum.photos/id/59/200/200.jpg'
-    ).then((v){
-      print('Notification ok');
-    }).catchError((e){
-      print('error with setNotification $e');
-    });
+    if(currentOs == 'android') {
+      print('the droid');
+      MediaNotification.setListener('pause', (){
+        this.playOrPause();
+      });
+      MediaNotification.setListener('play', (){
+        this.playOrPause();
+      });
+      MediaNotification.showNotification(
+        title: 'Le test',
+        author: 'Auteur',
+        isPlaying: _isPlaying ? true:false,
+      );
+    }
+
+    if(currentOs == 'ios') {
+      print('ios');
+      audioPlayer.setNotification(
+          title: 'Test audio',
+          artist: 'The artist',
+          albumTitle: 'The album',
+          imageUrl: 'https://i.picsum.photos/id/59/200/200.jpg'
+      ).then((v){
+        print('Notification ok');
+      }).catchError((e){
+        print('error with setNotification $e');
+      });
+    }
+
+    notifyListeners();
   }
 
-  void pause() async {
-
-    await audioPlayer.pause().then((v){
-      audioPlayer.getCurrentPosition().then((d){
-        print('Duration : $d');
-      });
-    }).catchError((e){
-      print('Error on pause $e');
-    });
+  void playOrPause() async {
+    if (audioPlayer.state == AudioPlayerState.PAUSED) {
+      await audioPlayer.resume();
+      _isPlaying = true;
+      notifyListeners();
+      return;
+    }
+    if (audioPlayer.state == AudioPlayerState.PLAYING) {
+      _isPlaying = false;
+      await audioPlayer.pause();
+      notifyListeners();
+      return;
+    }
   }
 
   void stop() async {
@@ -58,4 +90,6 @@ class AudioModel extends ChangeNotifier {
     this.audio = new Audio();
     notifyListeners();
   }
+
+
 }

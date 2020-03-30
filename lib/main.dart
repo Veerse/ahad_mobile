@@ -8,6 +8,7 @@ import 'package:ahadmobile/ui/Home/HomePage.dart';
 import 'package:ahadmobile/ui/LoadingPage.dart';
 import 'package:ahadmobile/ui/LoginPage.dart';
 import 'package:ahadmobile/ui/OnboardingPage.dart';
+import 'package:ahadmobile/ui/PlayerPage.dart';
 import 'package:ahadmobile/ui/ProfilePage.dart';
 import 'package:ahadmobile/ui/RegisterPage.dart';
 import 'package:flutter/material.dart';
@@ -76,6 +77,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => HomePage(),
         '/register': (context) => RegisterPage(),
         '/profile': (context) => ProfilePage(),
+        '/player': (context) => PlayerPage(),
       },
       // The home depends on if the user is logged or not
       home: FutureBuilder(
