@@ -5,7 +5,6 @@ import 'package:ahadmobile/ui/Home/ExploreTab.dart';
 import 'package:ahadmobile/ui/Home/HomeTab.dart';
 import 'package:ahadmobile/ui/Home/LibraryTab.dart';
 import 'package:ahadmobile/ui/Home/SearchTab.dart';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:bubble_bottom_bar/bubble_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -63,7 +62,7 @@ class HomePageState extends State<HomePage> {
         child: Icon(Icons.play_arrow, size: 32),
         //backgroundColor: Theme.of(context).primaryColor,
       ),*/
-      floatingActionButton: Consumer<AudioModel>(
+      /*floatingActionButton: Consumer<AudioModel>(
         builder: (context, audio, child){
           if (audio.audioPlayer.state != null){
             return GestureDetector(
@@ -80,7 +79,7 @@ class HomePageState extends State<HomePage> {
             return Container();
           }
         },
-      ),
+      ),*/
       bottomNavigationBar: BubbleBottomBar(
           //fabLocation: BubbleBottomBarFabLocation.end, //new
           opacity: .2,

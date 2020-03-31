@@ -1,6 +1,5 @@
 
 import 'package:ahadmobile/providers/AudioModel.dart';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -34,23 +33,7 @@ class PlayerPage extends StatelessWidget {
             Text('Le titre de test', style: Theme.of(context).textTheme.title),
             SizedBox(height: 8),
             Text('Imam Hassan Iquioussen', style: Theme.of(context).textTheme.subtitle),
-            FutureBuilder(
-              future: Provider.of<AudioModel>(context, listen: true).audioPlayer.getDuration(),
-              builder: (context, snapshot){
-                if (snapshot.hasData){
-                  return Slider(
-                    onChanged: (d) => Provider.of<AudioModel>(context, listen: false).audioPlayer.seek(new Duration(milliseconds: d.toInt())),
-                    value: Provider.of<AudioModel>(context, listen: true).getPosition,
-                    min: 0,
-                    max: double.parse(snapshot.data.toString()),
-                  );
-                } else {
-                  return Container();
-                }
-              },
-            ),
             SizedBox(height: 8),
-            Text('${Provider.of<AudioModel>(context).getPosition}'),
             SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -59,17 +42,7 @@ class PlayerPage extends StatelessWidget {
                   onPressed: () => Provider.of<AudioModel>(context, listen: false).playOrPause(),
                   icon: Consumer<AudioModel>(
                     builder: (context, audio, child){
-                      switch (audio.audioPlayer.state ) {
-                        case AudioPlayerState.PAUSED:
-                          return Icon(Icons.play_arrow);
-                          break;
-                        case AudioPlayerState.PLAYING:
-                          return Icon(Icons.pause);
-                          break;
-                        default:
-                          return Text(audio.audioPlayer.state.toString());
-                          break;
-                      }
+                      return Icon(Icons.play_arrow);
                     },
                   ),
                 )
