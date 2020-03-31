@@ -54,6 +54,15 @@ class AudioModel extends ChangeNotifier {
     }).catchError((e){
       print('Nok $e');
     });
+
+    if (Platform.isIOS) {
+      await _audioPlayer.setNotification(
+        title: _currentAudio.title,
+        artist: _currentAudio.user.firstName,
+        albumTitle: 'L\'labum',
+        imageUrl: "http://93.6.197.182:8095/user/${_currentAudio.user.id}/avatar"
+      );
+    }
   }
 
   // When playing or pausing current audio

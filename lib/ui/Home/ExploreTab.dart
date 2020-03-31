@@ -13,11 +13,11 @@ class ExploreTab extends StatelessWidget {
       child: Column(
         children: <Widget>[
           RaisedButton(
-            onPressed: () => Provider.of<AudioModel>(context, listen: false).playOrPause(new Audio(id: 1, user: new User(id: 1))),
+            onPressed: () => Provider.of<AudioModel>(context, listen: false).playOrPause(new Audio(id: 1, title: 'Audio un', user: new User(id: 1, firstName: 'Imam 1'))),
             child: Text('Audio box 1'),
           ),
           RaisedButton(
-            onPressed: () => Provider.of<AudioModel>(context, listen: false).playOrPause(new Audio(id: 2, user: new User(id: 2))),
+            onPressed: () => Provider.of<AudioModel>(context, listen: false).playOrPause(new Audio(id: 2, title: 'Audio deux', user: new User(id: 2, firstName: 'Imam 2'))),
             child: Text('Audio box 2'),
           ),
           RaisedButton(
