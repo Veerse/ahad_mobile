@@ -1,5 +1,6 @@
 
 import 'package:ahadmobile/providers/AudioModel.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -16,7 +17,7 @@ class PlayerPage extends StatelessWidget {
               decoration: BoxDecoration(
                 color: const Color(0xff7c94b6),
                 image: DecorationImage(
-                  image: NetworkImage('http://10.0.2.2:8095/user/${Provider.of<AudioModel>(context, listen: true).audio.user.id}/avatar'),
+                  image: NetworkImage('http://10.0.2.2:8095/user/${Provider.of<AudioModel>(context, listen: false).audio.user.id}/avatar'),
                   fit: BoxFit.cover,
                 ),
                 border: Border.all(
@@ -30,9 +31,9 @@ class PlayerPage extends StatelessWidget {
               alignment: Alignment.bottomRight,
             ),
             SizedBox(height: 32),
-            Text('Le titre de test', style: Theme.of(context).textTheme.title),
+            Text('${Provider.of<AudioModel>(context, listen: false).audio.title}', style: Theme.of(context).textTheme.title),
             SizedBox(height: 8),
-            Text('Imam Hassan Iquioussen', style: Theme.of(context).textTheme.subtitle),
+            Text('${Provider.of<AudioModel>(context, listen: false).audio.user.firstName}', style: Theme.of(context).textTheme.subtitle),
             SizedBox(height: 8),
             SizedBox(height: 8),
             Row(
@@ -42,7 +43,11 @@ class PlayerPage extends StatelessWidget {
                   onPressed: () => Provider.of<AudioModel>(context, listen: false).playOrPause(),
                   icon: Consumer<AudioModel>(
                     builder: (context, audio, child){
-                      return Icon(Icons.play_arrow);
+                      if(audio.audioPlayer.state == AudioPlayerState.PLAYING){
+                        return Icon(Icons.pause);
+                      } else {
+                        return Icon(Icons.play_arrow);
+                      }
                     },
                   ),
                 )
