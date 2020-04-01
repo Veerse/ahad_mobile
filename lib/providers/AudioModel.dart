@@ -1,6 +1,4 @@
 
-import 'dart:math';
-
 import 'package:ahadmobile/models/Audio.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,10 +13,12 @@ class AudioModel extends ChangeNotifier {
 
   Audio _currentAudio;
   static AudioPlayer _audioPlayer = new AudioPlayer();
+  Duration _audioDuration = new Duration(milliseconds: 0);
   Duration _currentPosition = new Duration(milliseconds: 0);
 
   Audio get audio => _currentAudio;
   AudioPlayer get audioPlayer => _audioPlayer;
+  Duration get audioDuration => _audioDuration;
   Duration get currentPosition => _currentPosition;
 
   void playOrPause([Audio a]) async {
@@ -63,8 +63,15 @@ class AudioModel extends ChangeNotifier {
 
     audioPlayer.onAudioPositionChanged.listen((Duration  p) {
       //print('Current position: $p');
-        //setState(() => position = p);
+      //setState(() => position = p);
       _currentPosition = p;
+      notifyListeners();
+    });
+
+    audioPlayer.onDurationChanged.listen((Duration  d) {
+      //print('Current position: $p');
+      //setState(() => position = p);
+      _audioDuration = d;
       notifyListeners();
     });
 
@@ -76,7 +83,7 @@ class AudioModel extends ChangeNotifier {
           title: _currentAudio.title,
           artist: _currentAudio.user.firstName,
           albumTitle: 'L\'labum',
-          imageUrl: "https://veerse.xyz/user/${_currentAudio.user.id}/avatar"
+          imageUrl: "https://veerse.xyz/user/${_currentAudio.user.id}/avatar",
       );
     }
 
@@ -119,6 +126,11 @@ class AudioModel extends ChangeNotifier {
       default:
         break;
     }
+  }
+
+  void setCurrentPosition (Duration d) {
+    this._currentPosition = d;
+    notifyListeners();
   }
 
   void dismiss(){

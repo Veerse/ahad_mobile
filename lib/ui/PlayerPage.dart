@@ -1,11 +1,21 @@
 
-import 'package:ahadmobile/models/Audio.dart';
 import 'package:ahadmobile/providers/AudioModel.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class PlayerPage extends StatelessWidget {
+
+  String _printDuration(Duration duration) {
+    String twoDigits(int n) {
+      if (n >= 10) return "$n";
+      return "0$n";
+    }
+
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+    return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +28,7 @@ class PlayerPage extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: const Color(0xff7c94b6),
                   image: DecorationImage(
-                    image: NetworkImage('https://veerse.xyz/user/${Provider.of<AudioModel>(context, listen: true).audio.user.id}/avatar'),
+                    image: NetworkImage('https://veerse.xyz/user/${Provider.of<AudioModel>(context, listen: false).audio.user.id}/avatar'),
                     fit: BoxFit.cover,
                   ),
                   border: Border.all(
@@ -31,31 +41,29 @@ class PlayerPage extends StatelessWidget {
                 width: 250,
                 alignment: Alignment.bottomRight,
               ),
-              SizedBox(height: 32),
-              Text('${Provider.of<AudioModel>(context, listen: true).audio.title}', style: Theme.of(context).textTheme.title),
-              SizedBox(height: 8),
-              Text('${Provider.of<AudioModel>(context, listen: true).audio.user.firstName}', style: Theme.of(context).textTheme.subtitle),
-              SizedBox(height: 8),
-              /*FutureBuilder(
-                future: Provider.of<AudioModel>(context, listen: true).audioPlayer.getDuration(),
-                builder: (context, snapshot){
-                  if (snapshot.hasData){
-                    return Column(
-                      children: <Widget>[
-                        Slider(
-                          value: Provider.of<AudioModel>(context, listen: true).currentPosition.inMilliseconds.toDouble(),
-                          min: 0,
-                          max: double.parse(snapshot.data.toString()),
-                          onChanged: (p) => Provider.of<AudioModel>(context, listen: false).audioPlayer.seek(new Duration(milliseconds: p.toInt())),
-                        ),
-                        Text('${Provider.of<AudioModel>(context, listen: true).currentPosition} : ${Duration(milliseconds: snapshot.data)}')
-                      ],
-                    );
-                  } else {
-                    return Text('aucune idée gros');
-                  }
+              Consumer<AudioModel>(
+                builder: (context, audio, child){
+                  return Column(
+                    children: <Widget>[
+                      SizedBox(height: 32),
+                      Text('${audio.audio.title}', style: Theme.of(context).textTheme.title),
+                      SizedBox(height: 8),
+                      Text('Imam ${audio.audio.user.firstName} ${audio.audio.user.lastName}'),
+                      SizedBox(height: 8),
+
+                    ],
+                  );
                 },
-              ),*/
+              ),
+              Slider(
+                onChangeStart: (p) => print('END $p'),
+                onChangeEnd: (p) => Provider.of<AudioModel>(context, listen: false).audioPlayer.seek(new Duration(milliseconds: p.toInt())),
+                onChanged: (p) => Provider.of<AudioModel>(context, listen: false).setCurrentPosition(new Duration(milliseconds: p.toInt())),
+                value: Provider.of<AudioModel>(context, listen: false).currentPosition.inMilliseconds.toDouble(),
+                min: 0,
+                max: Provider.of<AudioModel>(context, listen: false).audioDuration.inMilliseconds.toDouble(),
+              ),
+              Text('${_printDuration(Provider.of<AudioModel>(context, listen: false).currentPosition)} : ${_printDuration(Provider.of<AudioModel>(context, listen: true).audioDuration)}'),
               SizedBox(height: 8),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,

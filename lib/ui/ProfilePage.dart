@@ -1,5 +1,4 @@
 
-import 'package:ahadmobile/models/User.dart';
 import 'package:ahadmobile/providers/UserModel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

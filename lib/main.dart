@@ -1,5 +1,4 @@
 import 'package:ahadmobile/common/theme.dart';
-import 'package:ahadmobile/models/Audio.dart';
 import 'package:ahadmobile/models/User.dart';
 import 'package:ahadmobile/providers/AudioModel.dart';
 import 'package:ahadmobile/providers/UserModel.dart';
@@ -13,7 +12,6 @@ import 'package:ahadmobile/ui/ProfilePage.dart';
 import 'package:ahadmobile/ui/RegisterPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -53,7 +51,7 @@ class MyApp extends StatelessWidget {
     var userId = await storage.read(key: "userid").catchError((err){throw err;});
 
     if (jwt != null && userId != null){
-      User u = await UserRepository().JWTSignIn().catchError((err){
+      User u = await UserRepository().jwtSignIn().catchError((err){
         if (jwt != null){storage.delete(key: "ahad_token");}
         if (userId != null) {storage.delete(key: "userid");}
         throw err;

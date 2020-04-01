@@ -1,6 +1,5 @@
 
 import 'package:ahadmobile/providers/AudioModel.dart';
-import 'package:ahadmobile/providers/UserModel.dart';
 import 'package:ahadmobile/ui/Home/ExploreTab.dart';
 import 'package:ahadmobile/ui/Home/HomeTab.dart';
 import 'package:ahadmobile/ui/Home/LibraryTab.dart';
