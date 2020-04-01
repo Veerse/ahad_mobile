@@ -15,11 +15,11 @@ class AudioModel extends ChangeNotifier {
 
   Audio _currentAudio;
   static AudioPlayer _audioPlayer = new AudioPlayer();
-  double _audioDuration = 0.0;
+  Duration _currentPosition = new Duration(milliseconds: 0);
 
   Audio get audio => _currentAudio;
   AudioPlayer get audioPlayer => _audioPlayer;
-  double get audioDuration => _audioDuration;
+  Duration get currentPosition => _currentPosition;
 
   void playOrPause([Audio a]) async {
     if (a == null) {
@@ -61,14 +61,11 @@ class AudioModel extends ChangeNotifier {
       print('Nok $e');
     });
 
-    audioPlayer.onDurationChanged.listen((Duration d) {
-      print('Max duration: $d');
-      _audioDuration = d.inMilliseconds.toDouble();
-    });
-
     audioPlayer.onAudioPositionChanged.listen((Duration  p) {
-      print('Current position: $p');
+      //print('Current position: $p');
         //setState(() => position = p);
+      _currentPosition = p;
+      notifyListeners();
     });
 
     notifyListeners();
