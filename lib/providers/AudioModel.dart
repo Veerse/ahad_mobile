@@ -15,9 +15,11 @@ class AudioModel extends ChangeNotifier {
 
   Audio _currentAudio;
   static AudioPlayer _audioPlayer = new AudioPlayer();
+  double _audioDuration = 0.0;
 
   Audio get audio => _currentAudio;
   AudioPlayer get audioPlayer => _audioPlayer;
+  double get audioDuration => _audioDuration;
 
   void playOrPause([Audio a]) async {
     if (a == null) {
@@ -53,10 +55,20 @@ class AudioModel extends ChangeNotifier {
 
   // When playing a new audio
   void _initializeAndPlay() async {
-    await audioPlayer.play("http://93.6.197.182:8095/audio/${_currentAudio.id}/download", isLocal: false).then((v){
+    await audioPlayer.play("https://veerse.xyz/audio/${_currentAudio.id}/download", isLocal: false).then((v){
       print('Playing $v');
     }).catchError((e){
       print('Nok $e');
+    });
+
+    audioPlayer.onDurationChanged.listen((Duration d) {
+      print('Max duration: $d');
+      _audioDuration = d.inMilliseconds.toDouble();
+    });
+
+    audioPlayer.onAudioPositionChanged.listen((Duration  p) {
+      print('Current position: $p');
+        //setState(() => position = p);
     });
 
     notifyListeners();
@@ -67,7 +79,7 @@ class AudioModel extends ChangeNotifier {
           title: _currentAudio.title,
           artist: _currentAudio.user.firstName,
           albumTitle: 'L\'labum',
-          imageUrl: "http://93.6.197.182:8095/user/${_currentAudio.user.id}/avatar"
+          imageUrl: "https://veerse.xyz/user/${_currentAudio.user.id}/avatar"
       );
     }
 

@@ -17,7 +17,7 @@ class PlayerPage extends StatelessWidget {
               decoration: BoxDecoration(
                 color: const Color(0xff7c94b6),
                 image: DecorationImage(
-                  image: NetworkImage('http://10.0.2.2:8095/user/${Provider.of<AudioModel>(context, listen: false).audio.user.id}/avatar'),
+                  image: NetworkImage('https://veerse.xyz/user/${Provider.of<AudioModel>(context, listen: true).audio.user.id}/avatar'),
                   fit: BoxFit.cover,
                 ),
                 border: Border.all(
@@ -31,25 +31,28 @@ class PlayerPage extends StatelessWidget {
               alignment: Alignment.bottomRight,
             ),
             SizedBox(height: 32),
-            Text('${Provider.of<AudioModel>(context, listen: false).audio.title}', style: Theme.of(context).textTheme.title),
+            Text('${Provider.of<AudioModel>(context, listen: true).audio.title}', style: Theme.of(context).textTheme.title),
             SizedBox(height: 8),
-            Text('${Provider.of<AudioModel>(context, listen: false).audio.user.firstName}', style: Theme.of(context).textTheme.subtitle),
+            Text('${Provider.of<AudioModel>(context, listen: true).audio.user.firstName}', style: Theme.of(context).textTheme.subtitle),
             SizedBox(height: 8),
+            Text('Duration : ${Provider.of<AudioModel>(context, listen: true).audioPlayer.getDuration()}'),
+            FutureBuilder(
+              future: Provider.of<AudioModel>(context, listen: true).audioPlayer.getDuration(),
+              builder: (context, snapshot){
+                if (snapshot.hasData){
+                  return Text('${snapshot.data}');
+                } else {
+                  return Text('aucune idée gros');
+                }
+              },
+            ),
             SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 IconButton(
                   onPressed: () => Provider.of<AudioModel>(context, listen: false).playOrPause(),
-                  icon: Consumer<AudioModel>(
-                    builder: (context, audio, child){
-                      if(audio.audioPlayer.state == AudioPlayerState.PLAYING){
-                        return Icon(Icons.pause);
-                      } else {
-                        return Icon(Icons.play_arrow);
-                      }
-                    },
-                  ),
+                  icon: Icon(Provider.of<AudioModel>(context, listen: true).audioPlayer.state == AudioPlayerState.PLAYING ? Icons.pause:Icons.play_arrow)
                 )
               ],
             )
