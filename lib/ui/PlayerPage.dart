@@ -1,10 +1,21 @@
 
 import 'package:ahadmobile/providers/AudioModel.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:provider/provider.dart';
 
-class PlayerPage extends StatelessWidget {
+class PlayerPage extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _PlayerPageState();
+
+}
+
+class _PlayerPageState extends State<PlayerPage> {
+
+  bool _isHoldingSlider = false;
+  double _newDuration = 0.0;
 
   String _printDuration(Duration duration) {
     String twoDigits(int n) {
@@ -56,22 +67,77 @@ class PlayerPage extends StatelessWidget {
                 },
               ),
               Slider(
-                onChangeStart: (p) => print('END $p'),
-                onChangeEnd: (p) => Provider.of<AudioModel>(context, listen: false).audioPlayer.seek(new Duration(milliseconds: p.toInt())),
-                onChanged: (p) => Provider.of<AudioModel>(context, listen: false).setCurrentPosition(new Duration(milliseconds: p.toInt())),
-                value: Provider.of<AudioModel>(context, listen: false).currentPosition.inMilliseconds.toDouble(),
+                onChangeStart: (p) {
+                  setState(() {
+                    _isHoldingSlider = true;
+                  });
+                },
+                onChangeEnd: (p) {
+                  Provider.of<AudioModel>(context, listen: false).audioPlayer.seek(new Duration(seconds: _newDuration.toInt())).then((v){
+                    setState(() {
+                      _isHoldingSlider = false;
+                    });
+                  });
+                },
+                onChanged: (p) {
+                  setState(() {
+                  _newDuration = p;
+                  });
+                },
+                value: _isHoldingSlider ? _newDuration:Provider.of<AudioModel>(context, listen: true).currentPosition.inSeconds.toDouble(),
                 min: 0,
-                max: Provider.of<AudioModel>(context, listen: false).audioDuration.inMilliseconds.toDouble(),
+                max: Provider.of<AudioModel>(context, listen: false).audioDuration.inSeconds.toDouble(),
               ),
-              Text('${_printDuration(Provider.of<AudioModel>(context, listen: false).currentPosition)} : ${_printDuration(Provider.of<AudioModel>(context, listen: true).audioDuration)}'),
-              SizedBox(height: 8),
+              Text('${_isHoldingSlider ? _printDuration(Duration(seconds: _newDuration.toInt())):_printDuration(Provider.of<AudioModel>(context, listen: false).currentPosition)} : ${_printDuration(Provider.of<AudioModel>(context, listen: true).audioDuration)}'),
+              SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   IconButton(
-                      onPressed: () => Provider.of<AudioModel>(context, listen: false).playOrPause(),
-                      icon: Icon(Provider.of<AudioModel>(context, listen: true).audioPlayer.state == AudioPlayerState.PLAYING ? Icons.pause:Icons.play_arrow)
-                  )
+                      onPressed: () {
+                        var newDuration = new Duration();
+
+                        var currentPos = Provider.of<AudioModel>(context, listen: false).currentPosition.inSeconds;
+                        if (currentPos - 10 <=  0) {
+                          newDuration = new Duration(seconds: 0);
+                        } else {
+                          newDuration = new Duration(seconds: currentPos - 10);
+                        }
+                        Provider.of<AudioModel>(context, listen: false).audioPlayer.seek(newDuration);
+                      },
+                    icon: Icon(Icons.undo, size: 30)
+                  ),
+                  SizedBox(width: 16),
+                  IconButton(
+                      onPressed: () {
+                        Vibrate.canVibrate.then((v){
+                          if (v == true){
+                            Vibrate.feedback(FeedbackType.light);
+                          }
+                        });
+                        Provider.of<AudioModel>(context, listen: false).playOrPause();
+                      },
+                      icon: Icon(
+                        Provider.of<AudioModel>(context, listen: true).audioPlayer.state == AudioPlayerState.PLAYING ? Icons.pause:Icons.play_arrow,
+                        size: 30
+                      )
+                  ),
+                  SizedBox(width: 16),
+                  IconButton(
+                    onPressed: () {
+                      var newDuration = new Duration();
+
+                      var audioDuration = Provider.of<AudioModel>(context, listen: false).audioDuration.inSeconds;
+                      var currentPos = Provider.of<AudioModel>(context, listen: false).currentPosition.inSeconds;
+                      if (currentPos + 10 >=  audioDuration) {
+                        newDuration = new Duration(seconds: audioDuration);
+                      } else {
+                        newDuration = new Duration(seconds: currentPos + 10);
+                      }
+                      Provider.of<AudioModel>(context, listen: false).audioPlayer.seek(newDuration);
+                    },
+                    icon: Icon(Icons.forward_10, size: 30),
+                  ),
                 ],
               )
             ],

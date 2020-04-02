@@ -75,6 +75,10 @@ class AudioModel extends ChangeNotifier {
       notifyListeners();
     });
 
+    audioPlayer.onPlayerCompletion.listen((v){
+      print('Completion');
+    });
+
     notifyListeners();
 
     if (Platform.isIOS) {
