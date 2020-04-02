@@ -10,7 +10,9 @@ class HomeTabState extends Equatable{
   List<Object> get props => [];
 }
 
-class HomeTabInitial extends HomeTabState{}
+class HomeTabInitial extends HomeTabState{
+
+}
 
 class HomeTabLoading extends HomeTabState{}
 

@@ -4,10 +4,13 @@ import 'package:ahadmobile/blocs/HomeTabs/HomeTabEvents.dart';
 import 'package:ahadmobile/blocs/HomeTabs/HomeTabStates.dart';
 import 'package:ahadmobile/models/Audio.dart';
 import 'package:ahadmobile/providers/AudioModel.dart';
+import 'package:ahadmobile/providers/UserModel.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -22,32 +25,52 @@ class HomeTab extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return SmartRefresher(
+
       controller: _refreshController,
       onRefresh: (){
-        _homeTabBloc.add(FetchHomeTab(userId: 5));
+        Vibrate.canVibrate.then((v){
+          if (v == true){
+            Vibrate.feedback(FeedbackType.light);
+          }
+        });
+        _homeTabBloc.add(FetchHomeTab(userId: Provider.of<UserModel>(context, listen: false).user.id));
         _refreshController.refreshCompleted();
       },
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          //mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            SizedBox(height: _sizedBoxHeight),
-            _FeaturedAudio(_homeTabBloc), // Featured Audio
-            _separationWidget(),
-            _Announcement(_homeTabBloc), // Announcement
-            _separationWidget(),
-            /* _LastImamsAudios(_homeTabBloc), // Last imams audios
+      child: BlocBuilder(
+        bloc: _homeTabBloc,
+        builder: (context, state) {
+          if (state is HomeTabInitial) {
+            _homeTabBloc.add(FetchHomeTab(userId: Provider.of<UserModel>(context, listen: false).user.id));
+            return Center(
+              child: SpinKitFoldingCube(
+                color: Colors.lightGreen,
+                size: 25.0,
+              ),
+            );
+          } else {
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                //mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  SizedBox(height: _sizedBoxHeight),
+                  _FeaturedAudio(_homeTabBloc), // Featured Audio
+                  _separationWidget(),
+                  _Announcement(_homeTabBloc), // Announcement
+                  _separationWidget(),
+                  /* _LastImamsAudios(_homeTabBloc), // Last imams audios
             _separationWidget(),
             _LastMosquesAudios(_homeTabBloc), // Last mosques audios*/
-            SizedBox(height: _sizedBoxHeight,),
-          ],
-        ),
-      ),
+                  SizedBox(height: _sizedBoxHeight,),
+                ],
+              ),
+            );
+          }
+        }
+    ),
     );
   }
 }
-
 class _separationWidget extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
@@ -59,7 +82,6 @@ class _separationWidget extends StatelessWidget{
       ],
     );
   }
-
 }
 
 class _FeaturedAudio extends StatelessWidget {
@@ -106,7 +128,7 @@ class _FeaturedAudio extends StatelessWidget {
                               return IconButton(
                                 onPressed: () => audio.playOrPause(state.featuredAudio),
                                 color: Colors.white,
-                                icon: Icon(audio.audio.id == state.featuredAudio.id && audio.audioPlayer.state == AudioPlayerState.PLAYING ? Icons.pause:Icons.play_arrow),
+                                icon: Icon(audio.audio != null && audio.audio.id == state.featuredAudio.id && audio.audioPlayer.state == AudioPlayerState.PLAYING ? Icons.pause:Icons.play_arrow),
                                 iconSize: 50,
                               );
                             },
@@ -136,7 +158,10 @@ class _FeaturedAudio extends StatelessWidget {
             ],
           ) ;
         } else{
-          return Text('Loading');
+          return SpinKitFoldingCube(
+            color: Colors.lightGreen,
+            size: 25.0,
+          );
         }
       },
     );
@@ -156,7 +181,10 @@ class _Announcement extends StatelessWidget{
           return Text('initial');
         }
         if(state is HomeTabLoading){
-          return Text('Loading');
+          return SpinKitFoldingCube(
+            color: Colors.lightGreen,
+            size: 25.0,
+          );
         }
         if(state is HomeTabLoaded){
           return Column(

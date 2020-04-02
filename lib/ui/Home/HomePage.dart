@@ -90,7 +90,7 @@ class HomePageState extends State<HomePage> {
               ),
             );
           } else {
-            return Text('null');
+            return Container();
           }
         },
       ),
