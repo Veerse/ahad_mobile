@@ -65,7 +65,7 @@ class HomePageState extends State<HomePage> {
       ),*/
       floatingActionButton: Consumer <AudioModel> (
         builder: (context, audio, child){
-          if (audio.audioPlayer.state != null) {
+          if (audio.audioPlayer.state != null && audio.audioPlayer.state != AudioPlayerState.STOPPED) {
             return GestureDetector(
               onLongPress: () {
                 Vibrate.canVibrate.then((v){

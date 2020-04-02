@@ -1,4 +1,5 @@
 
+import 'package:ahadmobile/providers/AudioModel.dart';
 import 'package:ahadmobile/providers/UserModel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +48,8 @@ class ProfilePage extends StatelessWidget {
                               storage.delete(key: "userid");
                               Navigator.pop(context);
                               Navigator.pushNamedAndRemoveUntil(context, '/login', (Route<dynamic> route) => false);
-
+                              Provider.of<AudioModel>(context, listen: false).audioPlayer.stop();
+                              Provider.of<AudioModel>(context, listen: false).wipeAudio();
                             },
                             child: Text('Oui')
                         ),
