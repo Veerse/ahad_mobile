@@ -4,7 +4,7 @@ import 'package:introduction_screen/introduction_screen.dart';
 
 class OnBoardingPage extends StatelessWidget {
 
-  var listPagesViewModel = <PageViewModel>[
+  final listPagesViewModel = <PageViewModel>[
     PageViewModel(
       title: "Welcome to MUSLIMY",
       bodyWidget: Column(

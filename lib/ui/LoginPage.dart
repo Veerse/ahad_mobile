@@ -144,7 +144,7 @@ class LoginPageState extends State<LoginPage> {
                       var email = _fbKey.currentState.value['email'].toString().trim();
                       var pwd = _fbKey.currentState.value['pwd'].toString().trim();
 
-                      UserRepository().EmailSignIn(email, pwd).then((u){
+                      UserRepository().emailSignIn(email, pwd).then((u){
                         // AUTH SUCCESS
                         setState(() {
                           _isLoading = !_isLoading;

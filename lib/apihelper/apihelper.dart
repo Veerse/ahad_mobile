@@ -9,7 +9,7 @@ enum RequestType { GET, POST, PUT, DELETE }
 
 class APIHelper {
   // 10.0.2.2 on Android, localhost on iOS
-  final String _baseURI = "http://93.6.197.182:8095";
+  final String _baseURI = "https://veerse.xyz";
 
   final storage = new FlutterSecureStorage();
 

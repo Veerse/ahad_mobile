@@ -21,18 +21,18 @@ class RegisterPageState extends State<RegisterPage> {
   final _firstNameFocus = new FocusNode();
   final _lastNameFocus = new FocusNode();
   final _birthFocus = new FocusNode();
-  final _isMaleFocus = new FocusNode();
+  //final _isMaleFocus = new FocusNode();
   final _cityFocus = new FocusNode();
-  final _countryFocus = new FocusNode();
+  //final _countryFocus = new FocusNode();
   final _emailFocus = new FocusNode();
   final _pwdFocus = new FocusNode();
 
   bool _firstNameHasFocus = false,
       _lastNameHasFocus = false,
-      _birthHasFocus = false,
-      _isMaleHasFocus = false,
+      //_birthHasFocus = false,
+      //_isMaleHasFocus = false,
       _cityHasFocus = false,
-      _countryHasFocus = false,
+      //_countryHasFocus = false,
       _emailHasFocus = false,
       _pwdHasFocus = false;
 
@@ -348,7 +348,7 @@ class RegisterPageState extends State<RegisterPage> {
                                 pwd: _fbKey.currentState.value['pwd'].toString().trim()
                               );
 
-                              UserRepository().RegisterSignIn(u).then((User u){
+                              UserRepository().registerSignIn(u).then((User u){
                                 setState(() {
                                   _isLoading = false;
                                 });

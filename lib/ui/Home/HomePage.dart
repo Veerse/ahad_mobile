@@ -1,12 +1,13 @@
 
 import 'package:ahadmobile/providers/AudioModel.dart';
-import 'package:ahadmobile/providers/UserModel.dart';
 import 'package:ahadmobile/ui/Home/ExploreTab.dart';
 import 'package:ahadmobile/ui/Home/HomeTab.dart';
 import 'package:ahadmobile/ui/Home/LibraryTab.dart';
 import 'package:ahadmobile/ui/Home/SearchTab.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:bubble_bottom_bar/bubble_bottom_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -62,24 +63,37 @@ class HomePageState extends State<HomePage> {
         child: Icon(Icons.play_arrow, size: 32),
         //backgroundColor: Theme.of(context).primaryColor,
       ),*/
-      /*floatingActionButton: Consumer<AudioModel>(
+      floatingActionButton: Consumer <AudioModel> (
         builder: (context, audio, child){
-          if (audio.audioPlayer.state != null){
+          if (audio.audioPlayer.state != null) {
             return GestureDetector(
-              onLongPress: () => Navigator.pushNamed(context, '/player'),
+              onLongPress: () {
+                Vibrate.canVibrate.then((v){
+                  if (v == true){
+                    Vibrate.feedback(FeedbackType.light);
+                  }
+                });
+
+                Navigator.pushNamed(context, '/player');
+              },
               child: FloatingActionButton(
                 onPressed: (){
+                  Vibrate.canVibrate.then((v){
+                    if (v == true){
+                      Vibrate.feedback(FeedbackType.light);
+                    }
+                  });
                   Provider.of<AudioModel>(context, listen: false).playOrPause();
                 },
-                child: Icon(audio.audioPlayer.state == AudioPlayerState.PLAYING ? Icons.play_arrow:Icons.pause, size: 32),
+                child: Icon(audio.audioPlayer.state == AudioPlayerState.PLAYING ? Icons.pause:Icons.play_arrow, size: 32),
                 //backgroundColor: Theme.of(context).primaryColor,
               ),
             );
           } else {
-            return Container();
+            return Text('null');
           }
         },
-      ),*/
+      ),
       bottomNavigationBar: BubbleBottomBar(
           //fabLocation: BubbleBottomBarFabLocation.end, //new
           opacity: .2,
