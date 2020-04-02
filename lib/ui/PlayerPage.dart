@@ -73,6 +73,7 @@ class _PlayerPageState extends State<PlayerPage> {
                 Slider(
                   onChangeStart: (p) {
                     setState(() {
+                      Provider.of<AudioModel>(context, listen: false).audioPlayer.pause();
                       _isHoldingSlider = true;
                     });
                   },
@@ -80,6 +81,7 @@ class _PlayerPageState extends State<PlayerPage> {
                     Provider.of<AudioModel>(context, listen: false).audioPlayer.seek(new Duration(seconds: _newDuration.toInt())).then((v){
                       setState(() {
                         _isHoldingSlider = false;
+                        Provider.of<AudioModel>(context, listen: false).audioPlayer.resume();
                       });
                     });
                   },
