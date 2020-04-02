@@ -44,7 +44,7 @@ class HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Khutbatizer'),
+        title: Text('Muslimy'),
         actions: <Widget>[
           IconButton(
             onPressed: () => Navigator.pushNamed(context, '/profile'),

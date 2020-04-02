@@ -2,6 +2,7 @@
 import 'Tag.dart';
 import 'User.dart';
 
+
 class Audio {
   int id;
   String title;
@@ -61,5 +62,19 @@ class Audio {
       data['Tags'] = this.tags.map((v) => v.toJson()).toList();
     }
     return data;
+  }
+
+  static String getAudioType (Audio a) {
+    switch (a.audioType) {
+      case 0:
+        return "Khotba";
+        break;
+      case 1:
+        return "Dars";
+        break;
+      default:
+        return "Autre";
+        break;
+    }
   }
 }
