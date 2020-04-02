@@ -18,6 +18,7 @@ class APIHelper {
 
     var jwtCookie = await storage.read(key: "ahad_token");
 
+    print('Cookie is $jwtCookie');
     //print("jwt token inside helper is $jwtCookie");
     //print("Reqbody is $reqBody");
 
@@ -26,7 +27,7 @@ class APIHelper {
       http.Response response;
       switch (requestType) {
         case RequestType.GET:
-          response = await http.get(_baseURI + resource, headers: {HttpHeaders.cookieHeader:"$jwtCookie"});
+          response = await http.get(_baseURI + resource, headers: {HttpHeaders.cookieHeader: jwtCookie == null ? null:new Cookie("ahad_token", jwtCookie).toString()});
           updateCookie(response);
           break;
         case RequestType.POST:

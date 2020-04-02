@@ -17,6 +17,7 @@ class AudioModel extends ChangeNotifier {
   Duration _currentPosition = new Duration(milliseconds: 0);
 
   Audio get audio => _currentAudio;
+  set audio (a) => _currentAudio = a;
   AudioPlayer get audioPlayer => _audioPlayer;
   Duration get audioDuration => _audioDuration;
   Duration get currentPosition => _currentPosition;

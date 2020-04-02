@@ -44,7 +44,7 @@ class HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Khutbatizer'),
+        title: Text('Muslimy'),
         actions: <Widget>[
           IconButton(
             onPressed: () => Navigator.pushNamed(context, '/profile'),
@@ -65,7 +65,7 @@ class HomePageState extends State<HomePage> {
       ),*/
       floatingActionButton: Consumer <AudioModel> (
         builder: (context, audio, child){
-          if (audio.audioPlayer.state != null) {
+          if (audio.audioPlayer.state != null && audio.audioPlayer.state != AudioPlayerState.STOPPED) {
             return GestureDetector(
               onLongPress: () {
                 Vibrate.canVibrate.then((v){
@@ -90,7 +90,7 @@ class HomePageState extends State<HomePage> {
               ),
             );
           } else {
-            return Text('null');
+            return Container();
           }
         },
       ),
