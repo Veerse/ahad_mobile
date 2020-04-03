@@ -10,7 +10,8 @@ class Audio {
   int length;
   int audioQuality;
   int audioType;
-  DateTime audioDate;
+  DateTime audioDateGiven;
+  DateTime audioDateAdded;
   String audioPath;
   User user;
   List<Tag> tags;
@@ -22,7 +23,8 @@ class Audio {
         this.length,
         this.audioQuality,
         this.audioType,
-        this.audioDate,
+        this.audioDateGiven,
+        this.audioDateAdded,
         this.audioPath,
         this.user,
         this.tags});
@@ -34,7 +36,8 @@ class Audio {
     length = json['Length'];
     audioQuality = json['AudioQuality'];
     audioType = json['AudioType'];
-    audioDate = DateTime.parse(json['AudioDate']);
+    audioDateGiven = DateTime.parse(json['AudioDateGiven']);
+    audioDateAdded = DateTime.parse(json['AudioDateAdded']);
     audioPath = json['AudioPath'];
     user = json['User'] != null ? new User.fromJson(json['User']) : null;
     if (json['Tags'] != null) {
@@ -53,7 +56,8 @@ class Audio {
     data['Length'] = this.length;
     data['AudioQuality'] = this.audioQuality;
     data['AudioType'] = this.audioType;
-    data['AudioDate'] = data['Birth'] == null ? null:this.audioDate.toUtc().toIso8601String();
+    data['AudioDateGiven'] = data['AudioDateGiven'] == null ? null:this.audioDateGiven.toUtc().toIso8601String();
+    data['AudioDateAdded'] = data['AudioDateAdded'] == null ? null:this.audioDateAdded.toUtc().toIso8601String();
     data['AudioPath'] = this.audioPath;
     if (this.user != null) {
       data['User'] = this.user.toJson();

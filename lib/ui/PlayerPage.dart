@@ -149,13 +149,13 @@ class _PlayerPageState extends State<PlayerPage> {
                 SizedBox(height: 8),
                 Consumer<AudioModel>(
                   builder: (context, audio, child){
-                    if (audio.audio.audioDate != null && audio.audio.description != null) {
+                    if (audio.audio.audioDateGiven != null && audio.audio.description != null) {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text("${audio.audio.description}", textAlign: TextAlign.justify),
                           SizedBox(height: 8),
-                          Text('${Audio.getAudioType(audio.audio)} donné le ${DateFormat('dd-MM-yyyy').format(audio.audio.audioDate)}', style: Theme.of(context).textTheme.caption)
+                          Text('${Audio.getAudioType(audio.audio)} donné le ${DateFormat('dd-MM-yyyy').format(audio.audio.audioDateGiven)}', style: Theme.of(context).textTheme.caption)
                         ],
                       );
                     } else {

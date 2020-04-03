@@ -3,33 +3,33 @@ import 'package:ahadmobile/models/Announcement.dart';
 import 'package:ahadmobile/models/Audio.dart';
 import 'package:equatable/equatable.dart';
 
-class HomeTabState extends Equatable{
-  const HomeTabState();
+class HomeState extends Equatable{
+  const HomeState();
 
   @override
   List<Object> get props => [];
 }
 
-class HomeTabInitial extends HomeTabState{
+class HomeInitial extends HomeState{
 
 }
 
-class HomeTabLoading extends HomeTabState{}
+class HomeLoading extends HomeState{}
 
-class HomeTabLoaded extends HomeTabState{
+class HomeLoaded extends HomeState{
   final Announcement announcement;
   final List<Audio> lastImamsAudios;
   final List<Audio> lastMosquesAudios;
   final Audio featuredAudio;
 
-  const HomeTabLoaded({
+  const HomeLoaded({
     this.announcement,
     this.lastImamsAudios,
     this.lastMosquesAudios,
     this.featuredAudio});
 }
 
-class HomeTabLoadFailure extends HomeTabState{
+class HomeLoadFailure extends HomeState{
   final Error e;
-  const HomeTabLoadFailure({this.e});
+  const HomeLoadFailure({this.e});
 }

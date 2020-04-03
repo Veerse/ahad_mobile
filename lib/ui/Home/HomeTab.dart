@@ -1,7 +1,7 @@
 
-import 'package:ahadmobile/blocs/HomeTabs/HomeTabBloc.dart';
-import 'package:ahadmobile/blocs/HomeTabs/HomeTabEvents.dart';
-import 'package:ahadmobile/blocs/HomeTabs/HomeTabStates.dart';
+import 'package:ahadmobile/blocs/HomeTabs/HomeBloc.dart';
+import 'package:ahadmobile/blocs/HomeTabs/HomeEvents.dart';
+import 'package:ahadmobile/blocs/HomeTabs/HomeStates.dart';
 import 'package:ahadmobile/models/Audio.dart';
 import 'package:ahadmobile/providers/AudioModel.dart';
 import 'package:ahadmobile/providers/UserModel.dart';
@@ -20,7 +20,7 @@ const double _sizedBoxHeight = 16;
 
 class HomeTab extends StatelessWidget{
   final RefreshController _refreshController = new RefreshController();
-  final HomeTabBloc _homeTabBloc = new HomeTabBloc();
+  final HomeBloc _homeTabBloc = new HomeBloc();
 
   @override
   Widget build(BuildContext context) {
@@ -33,14 +33,14 @@ class HomeTab extends StatelessWidget{
             Vibrate.feedback(FeedbackType.light);
           }
         });
-        _homeTabBloc.add(FetchHomeTab(userId: Provider.of<UserModel>(context, listen: false).user.id));
+        _homeTabBloc.add(FetchHome(userId: Provider.of<UserModel>(context, listen: false).user.id));
         _refreshController.refreshCompleted();
       },
       child: BlocBuilder(
         bloc: _homeTabBloc,
         builder: (context, state) {
-          if (state is HomeTabInitial) {
-            _homeTabBloc.add(FetchHomeTab(userId: Provider.of<UserModel>(context, listen: false).user.id));
+          if (state is HomeInitial) {
+            _homeTabBloc.add(FetchHome(userId: Provider.of<UserModel>(context, listen: false).user.id));
             return Center(
               child: SpinKitFoldingCube(
                 color: Colors.lightGreen,
@@ -85,15 +85,15 @@ class _separationWidget extends StatelessWidget{
 }
 
 class _FeaturedAudio extends StatelessWidget {
-  final HomeTabBloc _homeTabBloc;
+  final HomeBloc _homeTabBloc;
   _FeaturedAudio(this._homeTabBloc);
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeTabBloc, HomeTabState>(
+    return BlocBuilder<HomeBloc, HomeState>(
       bloc: _homeTabBloc,
       builder: (context, state){
-        if(state is HomeTabLoaded){
+        if(state is HomeLoaded){
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -169,24 +169,24 @@ class _FeaturedAudio extends StatelessWidget {
 }
 
 class _Announcement extends StatelessWidget{
-  final HomeTabBloc _homeTabBloc;
+  final HomeBloc _homeTabBloc;
   _Announcement(this._homeTabBloc);
 
   @override
   Widget build(BuildContext context) {
-    return  BlocBuilder<HomeTabBloc, HomeTabState>(
+    return  BlocBuilder<HomeBloc, HomeState>(
       bloc: _homeTabBloc,
       builder: (context, state){
-        if(state is HomeTabInitial){
+        if(state is HomeInitial){
           return Text('initial');
         }
-        if(state is HomeTabLoading){
+        if(state is HomeLoading){
           return SpinKitFoldingCube(
             color: Colors.lightGreen,
             size: 25.0,
           );
         }
-        if(state is HomeTabLoaded){
+        if(state is HomeLoaded){
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -197,7 +197,7 @@ class _Announcement extends StatelessWidget{
             ],
           );
         }
-        if(state is HomeTabLoadFailure){
+        if(state is HomeLoadFailure){
           return Text(state.e.toString());
         }
         return Text('NOT FOUND STATE');
@@ -207,7 +207,7 @@ class _Announcement extends StatelessWidget{
 }
 
 class _LastImamsAudios extends StatelessWidget{
-  final HomeTabBloc _homeTabBloc;
+  final HomeBloc _homeTabBloc;
   _LastImamsAudios(this._homeTabBloc);
 
   @override
@@ -217,13 +217,13 @@ class _LastImamsAudios extends StatelessWidget{
       children: <Widget>[
         Text('Derniers audios de mes Imams', style: Theme.of(context).textTheme.title),
         SizedBox(height: _sizedBoxHeight),
-        BlocBuilder<HomeTabBloc, HomeTabState>(
+        BlocBuilder<HomeBloc, HomeState>(
           bloc: _homeTabBloc,
           builder: (context, state){
-            if(state is HomeTabInitial){
+            if(state is HomeInitial){
               return Text('Initial');
             }
-            if(state is HomeTabLoaded){
+            if(state is HomeLoaded){
               return Container(
                 height: 170,
                 child: ListView.builder(
@@ -247,7 +247,7 @@ class _LastImamsAudios extends StatelessWidget{
 }
 
 class _LastMosquesAudios extends StatelessWidget{
-  final HomeTabBloc _homeTabBloc;
+  final HomeBloc _homeTabBloc;
   _LastMosquesAudios(this._homeTabBloc);
 
   @override
@@ -257,13 +257,13 @@ class _LastMosquesAudios extends StatelessWidget{
       children: <Widget>[
         Text('Derniers audios de mes Mosquees', style: Theme.of(context).textTheme.title),
         SizedBox(height: _sizedBoxHeight),
-        BlocBuilder<HomeTabBloc, HomeTabState>(
+        BlocBuilder<HomeBloc, HomeState>(
           bloc: _homeTabBloc,
           builder: (context, state){
-            if(state is HomeTabInitial){
+            if(state is HomeInitial){
               return Text('Initial');
             }
-            if(state is HomeTabLoaded){
+            if(state is HomeLoaded){
               return Container(
                 height: 170,
                 child: ListView.builder(
