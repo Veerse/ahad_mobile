@@ -25,7 +25,7 @@ class SearchTab extends StatelessWidget {
             child: Text('Play button'),
           ),
           RaisedButton(
-            onPressed: () => Provider.of<AudioModel>(context, listen: false).dismiss(),
+            onPressed: () => Provider.of<AudioModel>(context, listen: false).dismissNotification(),
             child: Text('Dismiss all notifications'),
           ),
           IconButton(

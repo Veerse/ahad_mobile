@@ -58,6 +58,7 @@ class MyApp extends StatelessWidget {
         throw err;
       });
       Provider.of<UserModel>(context, listen: false).logIn(u);
+      Provider.of<AudioModel>(context, listen: false).userId = u.id;
       return HomePage();
     } else {
       Provider.of<UserModel>(context, listen: false).wipeUser();

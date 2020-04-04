@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 import 'package:ahadmobile/apihelper/customexception.dart';
 
-enum RequestType { GET, POST, PUT, DELETE }
+enum RequestType { GET, GET_WITH_PARAMETERS, POST, PUT, DELETE }
 
 class APIHelper {
   // 10.0.2.2 on Android, localhost on iOS
@@ -18,14 +18,16 @@ class APIHelper {
 
     var jwtCookie = await storage.read(key: "ahad_token");
 
-    print('Cookie is $jwtCookie');
-    //print("jwt token inside helper is $jwtCookie");
-    //print("Reqbody is $reqBody");
+    //print("Reqbody is ${json.encode(reqBody)}");
 
     var responseJSON;
     try {
       http.Response response;
       switch (requestType) {
+        case RequestType.GET_WITH_PARAMETERS:
+          response = await http.get(resource, headers: {HttpHeaders.cookieHeader: jwtCookie == null ? null:new Cookie("ahad_token", jwtCookie).toString()});
+          updateCookie(response);
+          break;
         case RequestType.GET:
           response = await http.get(_baseURI + resource, headers: {HttpHeaders.cookieHeader: jwtCookie == null ? null:new Cookie("ahad_token", jwtCookie).toString()});
           updateCookie(response);
@@ -51,6 +53,9 @@ class APIHelper {
   dynamic _returnResponse(http.Response response) {
     switch (response.statusCode) {
       case 200:
+        var responseJson = json.decode(utf8.decode(response.bodyBytes));
+        return responseJson;
+      case 201:
         var responseJson = json.decode(utf8.decode(response.bodyBytes));
         return responseJson;
       case 400:

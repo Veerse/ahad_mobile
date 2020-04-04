@@ -2,6 +2,7 @@
 import 'package:ahadmobile/blocs/HomeTabs/HomeBloc.dart';
 import 'package:ahadmobile/blocs/HomeTabs/HomeEvents.dart';
 import 'package:ahadmobile/blocs/HomeTabs/HomeStates.dart';
+import 'package:ahadmobile/models/Announcement.dart';
 import 'package:ahadmobile/models/Audio.dart';
 import 'package:ahadmobile/providers/AudioModel.dart';
 import 'package:ahadmobile/providers/UserModel.dart';
@@ -15,7 +16,6 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-const double _padding = 16;
 const double _sizedBoxHeight = 16;
 
 class HomeTab extends StatelessWidget{
@@ -25,7 +25,6 @@ class HomeTab extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return SmartRefresher(
-
       controller: _refreshController,
       onRefresh: (){
         Vibrate.canVibrate.then((v){
@@ -37,39 +36,61 @@ class HomeTab extends StatelessWidget{
         _refreshController.refreshCompleted();
       },
       child: BlocBuilder(
-        bloc: _homeTabBloc,
-        builder: (context, state) {
-          if (state is HomeInitial) {
-            _homeTabBloc.add(FetchHome(userId: Provider.of<UserModel>(context, listen: false).user.id));
-            return Center(
-              child: SpinKitFoldingCube(
-                color: Colors.lightGreen,
-                size: 25.0,
-              ),
-            );
-          } else {
-            return SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                //mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  SizedBox(height: _sizedBoxHeight),
-                  _FeaturedAudio(_homeTabBloc), // Featured Audio
-                  _SeparationWidget(),
-                  _Announcement(_homeTabBloc), // Announcement
-                  _SeparationWidget(),
-                  _RandomAudio(_homeTabBloc),
-                  _SeparationWidget(),
-                  /* _LastImamsAudios(_homeTabBloc), // Last imams audios
+          bloc: _homeTabBloc,
+          builder: (context, state) {
+            if (state is HomeInitial) {
+              _homeTabBloc.add(FetchHome(userId: Provider.of<UserModel>(context, listen: false).user.id));
+              return Center(
+                child: SpinKitFoldingCube(
+                  color: Colors.lightGreen,
+                  size: 25.0,
+                ),
+              );
+            } else if (state is HomeLoading) {
+              return Center(
+                child: SpinKitFoldingCube(
+                  color: Colors.lightGreen,
+                  size: 25.0,
+                ),
+              );
+            } else if (state is HomeLoaded) {
+              return SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  //mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    SizedBox(height: _sizedBoxHeight),
+                    _FeaturedAudio(state.featuredAudio), // Featured Audio
+                    _SeparationWidget(),
+                    _Announcement(state.announcement), // Announcement
+                    _SeparationWidget(),
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                            child: _LastListenedAudio(state.lastListenedAudio)
+                        ),
+                        Flexible(
+                          child: _RandomAudio(state.randomAudio),
+                        ),
+                      ],
+                    ),
+                    _SeparationWidget(),
+                    /* _LastImamsAudios(_homeTabBloc), // Last imams audios
             _separationWidget(),
             _LastMosquesAudios(_homeTabBloc), // Last mosques audios*/
-                  SizedBox(height: _sizedBoxHeight,),
-                ],
-              ),
-            );
+                    SizedBox(height: _sizedBoxHeight*2),
+                  ],
+                ),
+              );
+            } else if (state is HomeLoadFailure) {
+              return Center(
+                child: Text('Load failure ${state.e.toString()}'),
+              );
+            } else {
+              return Text('Unknown state');
+            }
           }
-        }
-    ),
+      ),
     );
   }
 }
@@ -87,134 +108,123 @@ class _SeparationWidget extends StatelessWidget{
 }
 
 class _FeaturedAudio extends StatelessWidget {
-  final HomeBloc _homeBloc;
-  _FeaturedAudio(this._homeBloc);
+  final Audio featuredAudio;
+  _FeaturedAudio(this.featuredAudio);
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeBloc, HomeState>(
-      bloc: _homeBloc,
-      builder: (context, state){
-        if(state is HomeLoaded){
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text('En vedette', style: Theme.of(context).textTheme.title),
-              SizedBox(height: _sizedBoxHeight),
-              Row(
-                children: <Widget>[
-                  //_AudioBox(),
-                  GestureDetector(
-                    onTap: () => print('tapped'),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: const Color(0xff7c94b6),
-                        image: DecorationImage(
-                          image: NetworkImage('https://veerse.xyz/user/${state.featuredAudio.user.id}/avatar'),
-                          fit: BoxFit.cover,
-                        ),
-                        border: Border.all(
-                          color: Colors.grey,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      height: 130,
-                      width: 130,
-                      alignment: Alignment.bottomRight,
-                      child: Center(
-                        child: Opacity(
-                          opacity: 0.5,
-                          child: Consumer<AudioModel>(
-                            builder: (context, audio, child){
-                              return IconButton(
-                                onPressed: () => audio.playOrPause(state.featuredAudio),
-                                color: Colors.white,
-                                icon: Icon(audio.audio != null && audio.audio.id == state.featuredAudio.id && audio.audioPlayer.state == AudioPlayerState.PLAYING ? Icons.pause:Icons.play_arrow),
-                                iconSize: 50,
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 16),
-                  Flexible(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text('${state.featuredAudio.title}', style: Theme.of(context).textTheme.body2,),
-                          Text('${state.featuredAudio.user.firstName} ${state.featuredAudio.user.lastName}', style: Theme.of(context).textTheme.caption),
-                          SizedBox(height: 16),
-                          Text('${state.featuredAudio.description}',
-                            textAlign: TextAlign.justify,
-                            maxLines: 4,
-                            overflow: TextOverflow.fade,
-                          )
-                        ],
-                      )
-                  )
-                ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text('En vedette', style: Theme.of(context).textTheme.title),
+        SizedBox(height: _sizedBoxHeight),
+        Row(
+          children: <Widget>[
+            //_AudioBox(),
+            Container(
+              decoration: BoxDecoration(
+                color: const Color(0xff7c94b6),
+                image: DecorationImage(
+                  image: NetworkImage('https://veerse.xyz/user/${featuredAudio.user.id}/avatar'),
+                  fit: BoxFit.cover,
+                ),
+                border: Border.all(
+                  color: Colors.grey,
+                  width: 1,
+                ),
+                borderRadius: BorderRadius.circular(8),
               ),
-            ],
-          ) ;
-        } else{
-          return SpinKitFoldingCube(
-            color: Colors.lightGreen,
-            size: 25.0,
-          );
-        }
-      },
+              height: 130,
+              width: 130,
+              alignment: Alignment.bottomRight,
+              child: Center(
+                child: Opacity(
+                  opacity: 0.5,
+                  child: Consumer<AudioModel>(
+                    builder: (context, audio, child){
+                      return IconButton(
+                        onPressed: () => audio.playOrPause(featuredAudio),
+                        color: Colors.white,
+                        icon: Icon(audio.audio != null && audio.audio.id == featuredAudio.id && audio.audioPlayer.state == AudioPlayerState.PLAYING ? Icons.pause:Icons.play_arrow),
+                        iconSize: 50,
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(width: 16),
+            Flexible(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text('${featuredAudio.title}', style: Theme.of(context).textTheme.body2,),
+                    Text('${featuredAudio.user.firstName} ${featuredAudio.user.lastName}', style: Theme.of(context).textTheme.caption),
+                    SizedBox(height: 16),
+                    Text('${featuredAudio.description}',
+                      textAlign: TextAlign.justify,
+                      maxLines: 4,
+                      overflow: TextOverflow.fade,
+                    )
+                  ],
+                )
+            )
+          ],
+        ),
+      ],
     );
   }
 }
 
 class _Announcement extends StatelessWidget{
-  final HomeBloc _homeBloc;
-  _Announcement(this._homeBloc);
+  final Announcement announcement;
+  _Announcement(this.announcement);
 
   @override
   Widget build(BuildContext context) {
-    return  BlocBuilder<HomeBloc, HomeState>(
-      bloc: _homeBloc,
-      builder: (context, state){
-        if(state is HomeInitial){
-          return Text('initial');
-        }
-        if(state is HomeLoading){
-          return SpinKitFoldingCube(
-            color: Colors.lightGreen,
-            size: 25.0,
-          );
-        }
-        if(state is HomeLoaded){
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text('${state.announcement.announcementTitle}', style: Theme.of(context).textTheme.title),
-              Text('${DateFormat("dd-MM-yyyy").format(state.announcement.announcementStartDate)}', style: Theme.of(context).textTheme.caption),
-              SizedBox(height: _sizedBoxHeight,),
-              Text('${state.announcement.announcementBody}'),
-            ],
-          );
-        }
-        if(state is HomeLoadFailure){
-          return Text(state.e.toString());
-        }
-        return Text('NOT FOUND STATE');
-      },
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text('${announcement.announcementTitle}', style: Theme.of(context).textTheme.title),
+        Text('${DateFormat("dd-MM-yyyy").format(announcement.announcementStartDate)}', style: Theme.of(context).textTheme.caption),
+        SizedBox(height: _sizedBoxHeight,),
+        Text('${announcement.announcementBody}'),
+      ],
+    );
+  }
+}
+
+class _LastListenedAudio extends StatelessWidget {
+  final Audio lastListenedAudio;
+  _LastListenedAudio(this.lastListenedAudio);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text('Reprendre', style: Theme.of(context).textTheme.title),
+        SizedBox(height: _sizedBoxHeight),
+        _AudioBoxItem(lastListenedAudio)
+      ],
     );
   }
 }
 
 class _RandomAudio extends StatelessWidget {
-  final HomeBloc _homeBloc;
-  _RandomAudio(this._homeBloc);
+  final Audio randomAudio;
+  _RandomAudio(this.randomAudio);
 
   @override
   Widget build(BuildContext context) {
-    return Text('random audio here');
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text('Au hasard', style: Theme.of(context).textTheme.title),
+        SizedBox(height: _sizedBoxHeight),
+        _AudioBoxItem(randomAudio)
+      ],
+    );
   }
 }
 
@@ -299,26 +309,50 @@ class _LastMosquesAudios extends StatelessWidget{
 }
 
 class _AudioBoxItem extends StatelessWidget{
-  final Audio _audio;
+  final Audio audio;
 
-  _AudioBoxItem(this._audio);
+  _AudioBoxItem(this.audio);
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
-        SizedBox(
-          height: 120, // (b) - see below
-          width: 120,
-          child: Card(
-            color: Colors.red,
+        Container(
+          decoration: BoxDecoration(
+            color: const Color(0xff7c94b6),
+            image: DecorationImage(
+              image: NetworkImage('https://veerse.xyz/user/${audio.user.id}/avatar'),
+              fit: BoxFit.cover,
+            ),
+            border: Border.all(
+              color: Colors.grey,
+              width: 1,
+            ),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          height: 130,
+          width: 130,
+          alignment: Alignment.bottomRight,
+          child: Center(
+            child: Opacity(
+              opacity: 0.5,
+              child: Consumer<AudioModel>(
+                builder: (context, audioModel, child){
+                  return IconButton(
+                    onPressed: () => audioModel.playOrPause(audio),
+                    color: Colors.white,
+                    icon: Icon(audioModel.audio != null && audioModel.audio.id == audio.id && audioModel.audioPlayer.state == AudioPlayerState.PLAYING ? Icons.pause:Icons.play_arrow),
+                    iconSize: 50,
+                  );
+                },
+              ),
+            ),
           ),
         ),
-        SizedBox(
-          width: 110,
-          height: 40, // MUST be equals ton container (a) height - sizedBox (b) height
-          child: Text('${_audio.title}', overflow: TextOverflow.fade),
-        )
+        SizedBox(height: _sizedBoxHeight),
+        Text('${audio.title}', style: Theme.of(context).textTheme.body1)
       ],
     );
   }

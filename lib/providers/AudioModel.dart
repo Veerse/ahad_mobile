@@ -1,5 +1,8 @@
 
 import 'package:ahadmobile/models/Audio.dart';
+import 'package:ahadmobile/models/Listening.dart';
+import 'package:ahadmobile/providers/UserModel.dart';
+import 'package:ahadmobile/repository/AudioRepository.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:io' show Platform;
@@ -10,14 +13,19 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 
 class AudioModel extends ChangeNotifier {
+  AudioRepository audioRepository = new AudioRepository();
 
+  //   Questionable choice, but I store userId inside AudioModel because we need
+  //  it when we POST a new Listening or when we GET initial listening position.
+  int _userId;
   Audio _currentAudio;
   static AudioPlayer _audioPlayer = new AudioPlayer();
   Duration _audioDuration = new Duration(milliseconds: 0);
   Duration _currentPosition = new Duration(milliseconds: 0);
 
-  Audio get audio => _currentAudio;
+  set userId (id) => _userId = id;
   set audio (a) => _currentAudio = a;
+  Audio get audio => _currentAudio;
   AudioPlayer get audioPlayer => _audioPlayer;
   Duration get audioDuration => _audioDuration;
   Duration get currentPosition => _currentPosition;
@@ -57,21 +65,24 @@ class AudioModel extends ChangeNotifier {
   // When playing a new audio
   void _initializeAndPlay() async {
     await audioPlayer.play("https://veerse.xyz/audio/${_currentAudio.id}/download", isLocal: false).then((v){
-      print('Playing $v');
     }).catchError((e){
       print('Nok $e');
     });
 
-    audioPlayer.onAudioPositionChanged.listen((Duration  p) {
-      //print('Current position: $p');
-      //setState(() => position = p);
+    audioPlayer.onAudioPositionChanged.listen((Duration  p) async {
+      //    If we do p.inSeconds%20 == 0, we would send to much request to server
+      //  (as seconds does 20.00X, 20.00Y, 20.00Z, ...). So we use milliseconds
+      //  instead. We do p.inMilliseconds%20000 < 150 because p.inMilliseconds%20000 == 0
+      //  will never be true, position goes forward too fast to be catch
+      //  at this exact moment
+      if (p.inMilliseconds%20000 < 150 && p.inSeconds > 0) {
+        await audioRepository.postListening(new Listening(audioId: _currentAudio.id, userId: _userId, position: p.inSeconds, date: DateTime.now()));
+      }
       _currentPosition = p;
       notifyListeners();
     });
 
     audioPlayer.onDurationChanged.listen((Duration  d) {
-      //print('Current position: $p');
-      //setState(() => position = p);
       _audioDuration = d;
       notifyListeners();
     });
@@ -138,7 +149,7 @@ class AudioModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void dismiss(){
+  void dismissNotification(){
     FlutterLocalNotificationsPlugin().cancelAll();
   }
 

@@ -54,7 +54,7 @@ class ExploreTab extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   SizedBox(height: _sizedBoxHeight),
-                  _Categories(_exploreBloc, state),
+                  _Categories(state),
                   _separationWidget()
                 ],
               ),
@@ -84,9 +84,8 @@ class _separationWidget extends StatelessWidget{
 }
 
 class _Categories extends StatelessWidget {
-  final ExploreBloc _exploreBloc;
   final ExploreLoaded _state;
-  _Categories(this._exploreBloc, this._state);
+  _Categories(this._state);
 
   @override
   Widget build(BuildContext context) {
