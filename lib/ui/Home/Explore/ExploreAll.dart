@@ -78,9 +78,23 @@ class ExploreAll extends StatelessWidget {
             itemBuilder: (context, index){
               return Card(
                 child: ListTile(
-                  onLongPress: () => _showAudioDialog(context, allAudios.elementAt(index)),
+                  onLongPress: () {
+                    Vibrate.canVibrate.then((v){
+                      if (v == true){
+                        Vibrate.feedback(FeedbackType.light);
+                      }
+                    });
+                    _showAudioDialog(context, allAudios.elementAt(index));
+                    },
                   leading: IconButton(
-                      onPressed: () => Provider.of<AudioModel>(context, listen: false).playOrPause(allAudios.elementAt(index)),
+                      onPressed: () {
+                        Vibrate.canVibrate.then((v){
+                          if (v == true){
+                            Vibrate.feedback(FeedbackType.light);
+                          }
+                        });
+                        Provider.of<AudioModel>(context, listen: false).playOrPause(allAudios.elementAt(index));
+                      },
                       icon: Icon(Icons.play_arrow,)
                   ),
                   trailing: IconButton(

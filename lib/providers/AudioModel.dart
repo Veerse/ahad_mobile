@@ -65,6 +65,9 @@ class AudioModel extends ChangeNotifier {
   // When playing a new audio
   void _initializeAndPlay() async {
 
+    if (audioPlayer.state == AudioPlayerState.PLAYING)
+      audioPlayer.pause();
+
     await audioRepository.fetchListening(_userId, _currentAudio.id).then((Listening onValue) async {
       await audioPlayer.play("https://veerse.xyz/audio/${_currentAudio.id}/download", isLocal: false, position: new Duration(seconds: onValue.position == null || onValue.position == _currentAudio.length ? 0:onValue.position)).then((v){
       }).catchError((e){
