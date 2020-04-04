@@ -1,9 +1,20 @@
 
 import 'package:ahadmobile/models/Audio.dart';
+import 'package:ahadmobile/models/Listening.dart';
+import 'package:ahadmobile/providers/AudioModel.dart';
+import 'package:ahadmobile/providers/UserModel.dart';
+import 'package:ahadmobile/repository/AudioRepository.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:slide_popup_dialog/slide_popup_dialog.dart' as slideDialog;
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class ExploreAll extends StatelessWidget {
+
+  final AudioRepository _audioRepository = new AudioRepository();
 
   String _printDuration(int seconds) {
     Duration duration = new Duration(seconds: seconds);
@@ -13,10 +24,13 @@ class ExploreAll extends StatelessWidget {
       return "0$n";
     }
 
+
+
     String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
     String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
     return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
   }
+
   @override
   Widget build(BuildContext context) {
     final List<Audio> allAudios = ModalRoute.of(context).settings.arguments;
@@ -24,6 +38,37 @@ class ExploreAll extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Tous les audios'),
+      ),
+      floatingActionButton: Consumer <AudioModel> (
+        builder: (context, audio, child){
+          if (audio.audioPlayer.state != null && audio.audioPlayer.state != AudioPlayerState.STOPPED) {
+            return GestureDetector(
+              onLongPress: () {
+                Vibrate.canVibrate.then((v){
+                  if (v == true){
+                    Vibrate.feedback(FeedbackType.light);
+                  }
+                });
+
+                Navigator.pushNamed(context, '/player');
+              },
+              child: FloatingActionButton(
+                onPressed: (){
+                  Vibrate.canVibrate.then((v){
+                    if (v == true){
+                      Vibrate.feedback(FeedbackType.light);
+                    }
+                  });
+                  Provider.of<AudioModel>(context, listen: false).playOrPause();
+                },
+                child: Icon(audio.audioPlayer.state == AudioPlayerState.PLAYING ? Icons.pause:Icons.play_arrow, size: 32),
+                //backgroundColor: Theme.of(context).primaryColor,
+              ),
+            );
+          } else {
+            return Container();
+          }
+        },
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 8),
@@ -33,9 +78,10 @@ class ExploreAll extends StatelessWidget {
             itemBuilder: (context, index){
               return Card(
                 child: ListTile(
+                  onLongPress: () => _showAudioDialog(context, allAudios.elementAt(index)),
                   leading: IconButton(
-                    onPressed: () => print('Taped'),
-                    icon: Icon(Icons.play_arrow,)
+                      onPressed: () => Provider.of<AudioModel>(context, listen: false).playOrPause(allAudios.elementAt(index)),
+                      icon: Icon(Icons.play_arrow,)
                   ),
                   trailing: IconButton(
                     onPressed: () => print('Added to favorites'),
@@ -53,4 +99,70 @@ class ExploreAll extends StatelessWidget {
     );
   }
 
+  void _showAudioDialog(context, Audio a) {
+    slideDialog.showSlideDialog(
+        context: context,
+        child: Expanded(
+          child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 32),
+                child: Column(
+                  //crossAxisAlignment: CrossAxisAlignment.start,
+                  //mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Text('${a.title}', style: Theme.of(context).textTheme.title, textAlign: TextAlign.justify,),
+                    SizedBox(height: 8),
+                    Text('${a.user.firstName} ${a.user.lastName}', style: Theme.of(context).textTheme.caption),
+                    SizedBox(height: 16),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xff7c94b6),
+                        image: DecorationImage(
+                          image: NetworkImage('https://veerse.xyz/user/${a.user.id}/avatar'),
+                          fit: BoxFit.cover,
+                        ),
+                        border: Border.all(
+                          color: Colors.grey,
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      height: 130,
+                      width: 130,
+                      alignment: Alignment.bottomRight,
+                    ),
+                    SizedBox(height: 32),
+                    Text('${a.description}', textAlign: TextAlign.justify),
+                    SizedBox(height: 32),
+                    Text('${Audio.getAudioType(a)} d\'une durée de ${_printDuration(a.length)} donné(e) le ${DateFormat('dd-MM-yyyy').format(a.audioDateGiven)}', style: Theme.of(context).textTheme.caption, textAlign: TextAlign.justify),
+                    SizedBox(height: 4),
+                    FutureBuilder(
+                      future: _audioRepository.fetchListening(Provider.of<UserModel>(context, listen:false).user.id, a.id),
+                      builder: (context, snapshot){
+                        if (snapshot.hasData){
+                          print('${snapshot.data.position}  ${a.length} ${snapshot.data.position.toString() == a.length.toString()}');
+                          if (snapshot.data.position != 0 && snapshot.data.position.toString() != a.length.toString()) {
+                            return Text('Denière écoute ${DateFormat('dd-MM-yyyy').format(snapshot.data.date)}. Temps restant ${_printDuration(a.length - snapshot.data.position)}', style: Theme.of(context).textTheme.caption, textAlign: TextAlign.justify);
+                          } else if (snapshot.data.position.toString() == a.length.toString()){
+                            return Text('Audio terminé le ${DateFormat('dd-MM-yyyy').format(snapshot.data.date)}', style: Theme.of(context).textTheme.caption);
+                          } else {
+                            return Container();
+                        }
+                        } else {
+                          return Text('Erreur lors de la récupération de la dernière écoute');
+                        }
+                      },
+                    ),
+                    SizedBox(height: 32),
+                    RaisedButton(
+                      onPressed: () => Provider.of<AudioModel>(context, listen: false).playOrPause(a),
+                      child: Text('Lire'),
+                    )
+                  ],
+                ),
+              )
+          ),
+        )
+    );
+  }
 }
