@@ -21,12 +21,14 @@ class HomeLoaded extends HomeState{
   final List<Audio> lastImamsAudios;
   final List<Audio> lastMosquesAudios;
   final Audio featuredAudio;
+  final Audio randomAudio;
 
   const HomeLoaded({
     this.announcement,
     this.lastImamsAudios,
     this.lastMosquesAudios,
-    this.featuredAudio});
+    this.featuredAudio,
+    this.randomAudio});
 }
 
 class HomeLoadFailure extends HomeState{

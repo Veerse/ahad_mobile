@@ -16,6 +16,11 @@ class AudioRepository {
     return Audio.fromJson(response);
   }
 
+  Future<Audio> fetchRandomAudio() async{
+    var response = await _apiHelper.request("/audio/random", RequestType.GET);
+    return Audio.fromJson(response);
+  }
+
   Future<List<Audio>> fetchAllAudios() async {
     var response = await _apiHelper.request("/audios", RequestType.GET);
     List<Audio> audios = (response as List).map((i)=>Audio.fromJson(i)).toList();

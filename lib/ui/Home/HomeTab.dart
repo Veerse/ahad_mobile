@@ -55,9 +55,11 @@ class HomeTab extends StatelessWidget{
                 children: <Widget>[
                   SizedBox(height: _sizedBoxHeight),
                   _FeaturedAudio(_homeTabBloc), // Featured Audio
-                  _separationWidget(),
+                  _SeparationWidget(),
                   _Announcement(_homeTabBloc), // Announcement
-                  _separationWidget(),
+                  _SeparationWidget(),
+                  _RandomAudio(_homeTabBloc),
+                  _SeparationWidget(),
                   /* _LastImamsAudios(_homeTabBloc), // Last imams audios
             _separationWidget(),
             _LastMosquesAudios(_homeTabBloc), // Last mosques audios*/
@@ -71,7 +73,7 @@ class HomeTab extends StatelessWidget{
     );
   }
 }
-class _separationWidget extends StatelessWidget{
+class _SeparationWidget extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -85,13 +87,13 @@ class _separationWidget extends StatelessWidget{
 }
 
 class _FeaturedAudio extends StatelessWidget {
-  final HomeBloc _homeTabBloc;
-  _FeaturedAudio(this._homeTabBloc);
+  final HomeBloc _homeBloc;
+  _FeaturedAudio(this._homeBloc);
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<HomeBloc, HomeState>(
-      bloc: _homeTabBloc,
+      bloc: _homeBloc,
       builder: (context, state){
         if(state is HomeLoaded){
           return Column(
@@ -169,13 +171,13 @@ class _FeaturedAudio extends StatelessWidget {
 }
 
 class _Announcement extends StatelessWidget{
-  final HomeBloc _homeTabBloc;
-  _Announcement(this._homeTabBloc);
+  final HomeBloc _homeBloc;
+  _Announcement(this._homeBloc);
 
   @override
   Widget build(BuildContext context) {
     return  BlocBuilder<HomeBloc, HomeState>(
-      bloc: _homeTabBloc,
+      bloc: _homeBloc,
       builder: (context, state){
         if(state is HomeInitial){
           return Text('initial');
@@ -206,9 +208,19 @@ class _Announcement extends StatelessWidget{
   }
 }
 
+class _RandomAudio extends StatelessWidget {
+  final HomeBloc _homeBloc;
+  _RandomAudio(this._homeBloc);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text('random audio here');
+  }
+}
+
 class _LastImamsAudios extends StatelessWidget{
-  final HomeBloc _homeTabBloc;
-  _LastImamsAudios(this._homeTabBloc);
+  final HomeBloc _homeBloc;
+  _LastImamsAudios(this._homeBloc);
 
   @override
   Widget build(BuildContext context) {
@@ -218,7 +230,7 @@ class _LastImamsAudios extends StatelessWidget{
         Text('Derniers audios de mes Imams', style: Theme.of(context).textTheme.title),
         SizedBox(height: _sizedBoxHeight),
         BlocBuilder<HomeBloc, HomeState>(
-          bloc: _homeTabBloc,
+          bloc: _homeBloc,
           builder: (context, state){
             if(state is HomeInitial){
               return Text('Initial');
