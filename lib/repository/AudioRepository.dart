@@ -38,6 +38,18 @@ class AudioRepository {
     List<Audio> audios = (response as List).map((i)=>Audio.fromJson(i)).toList();
     return audios;
   }
+  
+  Future<Listening> fetchListening(int userId, int audioId) async {
+    final queryParameters = {
+      'userId': userId.toString(),
+      'audioId':audioId.toString()
+    };
+
+    final uri = Uri.https('veerse.xyz', '/listening', queryParameters);
+
+    var response = await _apiHelper.request(uri.toString(), RequestType.GET_WITH_PARAMETERS);
+    return new Listening.fromJson(response);
+  }
 
   Future<void> postListening(Listening l) async {
     await _apiHelper.request("/listening", RequestType.POST, l.toJson()).catchError((e){

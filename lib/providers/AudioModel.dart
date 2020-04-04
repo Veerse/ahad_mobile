@@ -64,10 +64,14 @@ class AudioModel extends ChangeNotifier {
 
   // When playing a new audio
   void _initializeAndPlay() async {
-    await audioPlayer.play("https://veerse.xyz/audio/${_currentAudio.id}/download", isLocal: false).then((v){
-    }).catchError((e){
-      print('Nok $e');
+
+    await audioRepository.fetchListening(_userId, _currentAudio.id).then((Listening onValue) async {
+      await audioPlayer.play("https://veerse.xyz/audio/${_currentAudio.id}/download", isLocal: false, position: new Duration(seconds: onValue.position == null || onValue.position == _currentAudio.length ? 0:onValue.position)).then((v){
+      }).catchError((e){
+        print('Nok $e');
+      });
     });
+
 
     audioPlayer.onAudioPositionChanged.listen((Duration  p) async {
       //    If we do p.inSeconds%20 == 0, we would send to much request to server
@@ -87,8 +91,8 @@ class AudioModel extends ChangeNotifier {
       notifyListeners();
     });
 
-    audioPlayer.onPlayerCompletion.listen((v){
-      print('Completion');
+    audioPlayer.onPlayerCompletion.listen((v) async{
+      await audioRepository.postListening(new Listening(audioId: _currentAudio.id, userId: _userId, position: _currentAudio.length, date: DateTime.now()));
     });
 
     notifyListeners();
