@@ -65,6 +65,8 @@ class HomeTab extends StatelessWidget{
                     _Announcement(state.announcement), // Announcement
                     _SeparationWidget(),
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      //mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
                         Expanded(
                             child: _LastListenedAudio(state.lastListenedAudio)
@@ -352,7 +354,8 @@ class _AudioBoxItem extends StatelessWidget{
           ),
         ),
         SizedBox(height: _sizedBoxHeight),
-        Text('${audio.title}', style: Theme.of(context).textTheme.body1)
+        Text('${audio.title}', style: Theme.of(context).textTheme.body2),
+        Text('${audio.user.firstName} ${audio.user.lastName}', style: Theme.of(context).textTheme.caption)
       ],
     );
   }
