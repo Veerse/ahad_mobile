@@ -7,6 +7,7 @@ import 'package:ahadmobile/repository/AudioRepository.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:slide_popup_dialog/slide_popup_dialog.dart' as slideDialog;
 import 'package:intl/intl.dart';
@@ -95,7 +96,11 @@ class ExploreAll extends StatelessWidget {
                         });
                         Provider.of<AudioModel>(context, listen: false).playOrPause(allAudios.elementAt(index));
                       },
-                      icon: Icon(Icons.play_arrow,)
+                      icon: Icon(
+                        Provider.of<AudioModel>(context, listen: true).audio != null &&
+                        Provider.of<AudioModel>(context, listen: true).audio.id == allAudios.elementAt(index).id &&
+                        Provider.of<AudioModel>(context, listen: true).audioPlayer.state == AudioPlayerState.PLAYING
+                        ? Icons.pause:Icons.play_arrow,)
                   ),
                   trailing: IconButton(
                     onPressed: () => print('Added to favorites'),
@@ -154,23 +159,34 @@ class ExploreAll extends StatelessWidget {
                       future: _audioRepository.fetchListening(Provider.of<UserModel>(context, listen:false).user.id, a.id),
                       builder: (context, snapshot){
                         if (snapshot.hasData){
-                          print('${snapshot.data.position}  ${a.length} ${snapshot.data.position.toString() == a.length.toString()}');
                           if (snapshot.data.position != 0 && snapshot.data.position.toString() != a.length.toString()) {
-                            return Text('Denière écoute ${DateFormat('dd-MM-yyyy').format(snapshot.data.date)}. Temps restant ${_printDuration(a.length - snapshot.data.position)}', style: Theme.of(context).textTheme.caption, textAlign: TextAlign.justify);
+                            return Text('${((a.length - snapshot.data.position)/60).floor()} minute(s) restante(s) - Denière écoute ${DateFormat('dd-MM-yyyy').format(snapshot.data.date)}', style: Theme.of(context).textTheme.caption, textAlign: TextAlign.justify);
                           } else if (snapshot.data.position.toString() == a.length.toString()){
                             return Text('Audio terminé le ${DateFormat('dd-MM-yyyy').format(snapshot.data.date)}', style: Theme.of(context).textTheme.caption);
                           } else {
                             return Container();
                         }
                         } else {
-                          return Text('Erreur lors de la récupération de la dernière écoute');
+                          return SpinKitThreeBounce(
+                            color: Colors.grey,
+                            size: 15,
+                          );
                         }
                       },
                     ),
                     SizedBox(height: 32),
-                    RaisedButton(
-                      onPressed: () => Provider.of<AudioModel>(context, listen: false).playOrPause(a),
-                      child: Text('Lire'),
+                    Consumer<AudioModel>(
+                      builder: (context, audio, child){
+                        return RaisedButton(
+                          onPressed: () => audio.playOrPause(a),
+                          child: Text(
+                              Provider.of<AudioModel>(context, listen: true).audio != null &&
+                              Provider.of<AudioModel>(context, listen: true).audio.id == audio.audio.id &&
+                              Provider.of<AudioModel>(context, listen: true).audioPlayer.state == AudioPlayerState.PLAYING ?
+                              'Pause':'Lire'
+                          ),
+                        );
+                      }
                     )
                   ],
                 ),
