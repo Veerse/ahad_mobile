@@ -2,13 +2,13 @@
 
 import 'package:ahadmobile/blocs/HomeTabs/ExploreEvents.dart';
 import 'package:ahadmobile/blocs/HomeTabs/ExploreStates.dart';
-import 'package:ahadmobile/repository/AnnouncementRepository.dart';
 import 'package:ahadmobile/repository/AudioRepository.dart';
+import 'package:ahadmobile/repository/TagRepository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ExploreBloc extends Bloc<ExploreEvent, ExploreState>{
-  AnnouncementRepository _announcementRepository = new AnnouncementRepository();
   AudioRepository _audioRepository = new AudioRepository();
+  TagRepository _tagRepository = new TagRepository();
 
   @override
   ExploreState get initialState => ExploreInitial();
@@ -19,9 +19,9 @@ class ExploreBloc extends Bloc<ExploreEvent, ExploreState>{
       try{
         yield ExploreLoading();
         var a = await _audioRepository.fetchAllAudios();
+        var b = await _tagRepository.fetchAllTags();
 
-
-        yield ExploreLoaded(allAudios: a);
+        yield ExploreLoaded(allAudios: a, allTags: b);
       } catch(error){
         yield ExploreLoadFailure(e: error);
       }

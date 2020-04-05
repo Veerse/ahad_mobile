@@ -104,7 +104,7 @@ class _Categories extends StatelessWidget {
             leading: Icon(Icons.apps),
             title: Text('Themes'),
             trailing: Icon(Icons.navigate_next),
-            onTap: () => print('Go to themes'),
+            onTap: () => Navigator.pushNamed(context, '/explore/tags', arguments: _state.allTags),
           ),
         ),
         Card(

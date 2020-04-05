@@ -2,6 +2,7 @@
 
 import 'package:ahadmobile/models/Announcement.dart';
 import 'package:ahadmobile/models/Audio.dart';
+import 'package:ahadmobile/models/Tag.dart';
 import 'package:equatable/equatable.dart';
 
 class ExploreState extends Equatable{
@@ -19,9 +20,11 @@ class ExploreLoading extends ExploreState{}
 
 class ExploreLoaded extends ExploreState{
   final List<Audio> allAudios;
+  final List<Tag> allTags;
 
   const ExploreLoaded({
     this.allAudios,
+    this.allTags,
   });
 }
 

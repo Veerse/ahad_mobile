@@ -4,7 +4,7 @@ class Tag {
   String coverPath;
   String tagName;
 
-  Tag({this.id, this.tagName});
+  Tag({this.id, this.coverPath, this.tagName});
 
   Tag.fromJson(Map<String, dynamic> json) {
     id = json['Id'];

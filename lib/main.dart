@@ -4,6 +4,7 @@ import 'package:ahadmobile/providers/AudioModel.dart';
 import 'package:ahadmobile/providers/UserModel.dart';
 import 'package:ahadmobile/repository/UserRepository.dart';
 import 'package:ahadmobile/ui/Home/Explore/ExploreAll.dart';
+import 'package:ahadmobile/ui/Home/Explore/ExploreTags.dart';
 import 'package:ahadmobile/ui/Home/HomePage.dart';
 import 'package:ahadmobile/ui/LoadingPage.dart';
 import 'package:ahadmobile/ui/LoginPage.dart';
@@ -81,6 +82,7 @@ class MyApp extends StatelessWidget {
         '/profile': (context) => ProfilePage(),
         '/player': (context) => PlayerPage(),
         '/explore/all': (context) => ExploreAll(),
+        '/explore/tags': (context) => ExploreTags(),
       },
       // The home depends on if the user is logged or not
       home: FutureBuilder(
