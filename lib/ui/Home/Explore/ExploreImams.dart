@@ -1,49 +1,49 @@
 
 import 'dart:ui';
 
-import 'package:ahadmobile/models/Tag.dart';
+import 'package:ahadmobile/models/User.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class ExploreTags extends StatelessWidget {
+class ExploreImams extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final List<Tag> allTags = ModalRoute.of(context).settings.arguments;
+    final List<User> allImams = ModalRoute.of(context).settings.arguments;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Themes'),
+        title: Text('Imams'),
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 32),
-        child: Center(
-          child: ListView.builder(
-            itemCount: allTags.length,
-            itemBuilder: (context, index) {
-              return _TagItem(allTags.elementAt(index));
-            },
-          ),
-        )
+          padding: EdgeInsets.symmetric(horizontal: 32),
+          child: Center(
+            child: ListView.builder(
+              itemCount: allImams.length,
+              itemBuilder: (context, index) {
+                return _ImamItem(allImams.elementAt(index));
+              },
+            ),
+          )
       ),
     );
   }
 }
 
-class _TagItem extends StatelessWidget {
-  final Tag tag;
+class _ImamItem extends StatelessWidget {
+  final User imam;
 
-  _TagItem(this.tag);
+  _ImamItem(this.imam);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.pushNamed(context, '/explore/tag/details', arguments: tag),
+      onTap: () => Navigator.pushNamed(context, '/explore/imam/details', arguments: imam),
       child: Container(
           margin: EdgeInsets.symmetric(vertical: 16),
           height: 150,
           decoration: BoxDecoration(
               image: DecorationImage(
-                  image: NetworkImage("https://veerse.xyz/tag/${tag.id}/image"),
+                  image: NetworkImage("https://veerse.xyz/tag/${imam.id}/image"),
                   fit: BoxFit.fitWidth
               ),
               borderRadius: BorderRadius.circular(8),
@@ -57,9 +57,17 @@ class _TagItem extends StatelessWidget {
             //image:
           ),
           child: Center(
-            child: Text('#${tag.tagName.toLowerCase()}', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+            child: Text('#${imam.firstName.toLowerCase()}', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
           )
       ),
     );
   }
 }
+
+/*
+
+Center(
+        child: Text('#${tag.tagName}', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+      ),
+
+ */

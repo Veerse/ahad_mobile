@@ -96,7 +96,7 @@ class _Categories extends StatelessWidget {
             leading: Icon(Icons.person),
             title: Text('Imams'),
             trailing: Icon(Icons.navigate_next),
-            onTap: () => print('Go to imam'),
+            onTap: () => Navigator.pushNamed(context, '/explore/imams', arguments: _state.allImams),
           ),
         ),
         Card(
