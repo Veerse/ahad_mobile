@@ -54,18 +54,9 @@ class _TagItem extends StatelessWidget {
         )
         //image:
       ),
-      child: ClipRRect( // make sur
-        borderRadius: BorderRadius.circular(8),// e we apply clip it properly
-        child: BackdropFilter(
-
-          filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
-          child: Container(
-            alignment: Alignment.center,
-            color: Colors.grey.withOpacity(0.01),
-            child: Text('#${tag.tagName.toLowerCase()}', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-          ),
-        ),
-      ),
+      child: Center(
+        child: Text('#${tag.tagName.toLowerCase()}', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+      )
     );
   }
 }
