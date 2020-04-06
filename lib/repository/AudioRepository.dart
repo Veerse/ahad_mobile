@@ -52,7 +52,7 @@ class AudioRepository {
 
   Future<List<Audio>> fetchAllAudiosOfImam(int imamId) async {
     final queryParameters = {
-      'tagId': imamId.toString(),
+      'imamId': imamId.toString(),
     };
     final uri = Uri.https('veerse.xyz', '/audios', queryParameters);
     var response = await _apiHelper.request(uri.toString(), RequestType.GET_WITH_PARAMETERS);

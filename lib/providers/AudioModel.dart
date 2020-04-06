@@ -104,6 +104,7 @@ class AudioModel extends ChangeNotifier {
           artist: _currentAudio.user.firstName,
           albumTitle: 'L\'labum',
           imageUrl: "https://veerse.xyz/user/${_currentAudio.user.id}/avatar",
+
       );
     }
 
