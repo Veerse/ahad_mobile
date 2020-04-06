@@ -161,7 +161,10 @@ class _FeaturedAudio extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text('${featuredAudio.title}', style: Theme.of(context).textTheme.body2,),
-                    Text('${featuredAudio.user.firstName} ${featuredAudio.user.lastName}', style: Theme.of(context).textTheme.caption),
+                    GestureDetector(
+                      onTap: () => Navigator.pushNamed(context, '/explore/imam/details', arguments: featuredAudio.user),
+                      child: Text('${featuredAudio.user.firstName} ${featuredAudio.user.lastName}', style: Theme.of(context).textTheme.caption),
+                    ),
                     SizedBox(height: 16),
                     Text('${featuredAudio.description}',
                       textAlign: TextAlign.justify,
@@ -355,7 +358,10 @@ class _AudioBoxItem extends StatelessWidget{
         ),
         SizedBox(height: _sizedBoxHeight),
         Text('${audio.title}', style: Theme.of(context).textTheme.body2),
-        Text('${audio.user.firstName} ${audio.user.lastName}', style: Theme.of(context).textTheme.caption)
+        GestureDetector(
+          onTap: () => Navigator.pushNamed(context, '/explore/imam/details', arguments: audio.user),
+          child: Text('${audio.user.firstName} ${audio.user.lastName}', style: Theme.of(context).textTheme.caption),
+        ),
       ],
     );
   }

@@ -63,9 +63,11 @@ class _PlayerPageState extends State<PlayerPage> {
                         SizedBox(height: 32),
                         Text('${audio.audio.title}', style: Theme.of(context).textTheme.title),
                         SizedBox(height: 8),
-                        Text('${audio.audio.user.firstName} ${audio.audio.user.lastName}'),
+                        GestureDetector(
+                          onTap: () => Navigator.pushNamed(context, '/explore/imam/details', arguments: audio.audio.user),
+                          child: Text('${audio.audio.user.firstName} ${audio.audio.user.lastName}'),
+                        ),
                         SizedBox(height: 8),
-
                       ],
                     );
                   },
@@ -155,7 +157,14 @@ class _PlayerPageState extends State<PlayerPage> {
                         children: <Widget>[
                           Text("${audio.audio.description}", textAlign: TextAlign.justify),
                           SizedBox(height: 8),
-                          Text('${Audio.getAudioType(audio.audio)} donné le ${DateFormat('dd-MM-yyyy').format(audio.audio.audioDateGiven)}', style: Theme.of(context).textTheme.caption)
+                          Text('${Audio.getAudioType(audio.audio)} donné le ${DateFormat('dd-MM-yyyy').format(audio.audio.audioDateGiven)}', style: Theme.of(context).textTheme.caption),
+                          SizedBox(height: 16),
+                          Row(
+                            children: audio.audio.tags.map((t) => GestureDetector(
+                              onTap: () => Navigator.pushNamed(context, '/explore/tag/details', arguments: t),
+                              child: Text('#${t.tagName.toLowerCase()}  ', style: Theme.of(context).textTheme.caption),
+                            )).toList()
+                          )
                         ],
                       );
                     } else {
@@ -169,6 +178,4 @@ class _PlayerPageState extends State<PlayerPage> {
         )
     );
   }
-
-
 }
