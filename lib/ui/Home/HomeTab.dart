@@ -6,6 +6,7 @@ import 'package:ahadmobile/models/Announcement.dart';
 import 'package:ahadmobile/models/Audio.dart';
 import 'package:ahadmobile/providers/AudioModel.dart';
 import 'package:ahadmobile/providers/UserModel.dart';
+import 'package:ahadmobile/ui/Common.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -71,7 +72,7 @@ class HomeTab extends StatelessWidget{
                         Expanded(
                             child: _LastListenedAudio(state.lastListenedAudio)
                         ),
-                        Flexible(
+                        Expanded(
                           child: _RandomAudio(state.randomAudio),
                         ),
                       ],
@@ -80,7 +81,7 @@ class HomeTab extends StatelessWidget{
                     /* _LastImamsAudios(_homeTabBloc), // Last imams audios
             _separationWidget(),
             _LastMosquesAudios(_homeTabBloc), // Last mosques audios*/
-                    SizedBox(height: _sizedBoxHeight*2),
+                    SizedBox(height: _sizedBoxHeight*4),
                   ],
                 ),
               );
@@ -103,7 +104,7 @@ class _SeparationWidget extends StatelessWidget{
       children: <Widget>[
         SizedBox(height: _sizedBoxHeight),
         Divider(),
-        SizedBox(height: _sizedBoxHeight)
+        SizedBox(height: _sizedBoxHeight),
       ],
     );
   }
@@ -123,34 +124,37 @@ class _FeaturedAudio extends StatelessWidget {
         Row(
           children: <Widget>[
             //_AudioBox(),
-            Container(
-              decoration: BoxDecoration(
-                color: const Color(0xff7c94b6),
-                image: DecorationImage(
-                  image: NetworkImage('https://veerse.xyz/user/${featuredAudio.user.id}/avatar'),
-                  fit: BoxFit.cover,
+            GestureDetector(
+              onLongPress: () => showAudioDialog(context, featuredAudio),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xff7c94b6),
+                  image: DecorationImage(
+                    image: NetworkImage('https://veerse.xyz/user/${featuredAudio.user.id}/avatar'),
+                    fit: BoxFit.cover,
+                  ),
+                  border: Border.all(
+                    color: Colors.grey,
+                    width: 1,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                border: Border.all(
-                  color: Colors.grey,
-                  width: 1,
-                ),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              height: 130,
-              width: 130,
-              alignment: Alignment.bottomRight,
-              child: Center(
-                child: Opacity(
-                  opacity: 0.5,
-                  child: Consumer<AudioModel>(
-                    builder: (context, audio, child){
-                      return IconButton(
-                        onPressed: () => audio.playOrPause(featuredAudio),
-                        color: Colors.white,
-                        icon: Icon(audio.audio != null && audio.audio.id == featuredAudio.id && audio.audioPlayer.state == AudioPlayerState.PLAYING ? Icons.pause:Icons.play_arrow),
-                        iconSize: 50,
-                      );
-                    },
+                height: 130,
+                width: 130,
+                alignment: Alignment.bottomRight,
+                child: Center(
+                  child: Opacity(
+                    opacity: 0.5,
+                    child: Consumer<AudioModel>(
+                      builder: (context, audio, child){
+                        return IconButton(
+                          onPressed: () => audio.playOrPause(featuredAudio),
+                          color: Colors.white,
+                          icon: Icon(audio.audio != null && audio.audio.id == featuredAudio.id && audio.audioPlayer.state == AudioPlayerState.PLAYING ? Icons.pause:Icons.play_arrow),
+                          iconSize: 50,
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
@@ -292,14 +296,17 @@ class _LastMosquesAudios extends StatelessWidget{
             }
             if(state is HomeLoaded){
               return Container(
-                height: 170,
+                height: 150,
                 child: ListView.builder(
                     physics: ClampingScrollPhysics(),
                     shrinkWrap: true,
                     scrollDirection: Axis.horizontal,
                     itemCount: state.lastImamsAudios.length,
                     itemBuilder: (BuildContext context, int index){
-                      return _AudioBoxItem(state.lastImamsAudios.elementAt(index));
+                      return Container(
+                        width: 150,
+                        child: _AudioBoxItem(state.lastImamsAudios.elementAt(index)),
+                      );
                     }
                 ),
               );
@@ -320,49 +327,56 @@ class _AudioBoxItem extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: <Widget>[
-        Container(
-          decoration: BoxDecoration(
-            color: const Color(0xff7c94b6),
-            image: DecorationImage(
-              image: NetworkImage('https://veerse.xyz/user/${audio.user.id}/avatar'),
-              fit: BoxFit.cover,
-            ),
-            border: Border.all(
-              color: Colors.grey,
-              width: 1,
-            ),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          height: 130,
-          width: 130,
-          alignment: Alignment.bottomRight,
-          child: Center(
-            child: Opacity(
-              opacity: 0.5,
-              child: Consumer<AudioModel>(
-                builder: (context, audioModel, child){
-                  return IconButton(
-                    onPressed: () => audioModel.playOrPause(audio),
-                    color: Colors.white,
-                    icon: Icon(audioModel.audio != null && audioModel.audio.id == audio.id && audioModel.audioPlayer.state == AudioPlayerState.PLAYING ? Icons.pause:Icons.play_arrow),
-                    iconSize: 50,
-                  );
-                },
+    return Container(
+      width: 130,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          GestureDetector(
+            onLongPress: () => showAudioDialog(context, audio),
+            child: Container(
+              decoration: BoxDecoration(
+                color: const Color(0xff7c94b6),
+                image: DecorationImage(
+                  image: NetworkImage('https://veerse.xyz/user/${audio.user.id}/avatar'),
+                  fit: BoxFit.cover,
+                ),
+                border: Border.all(
+                  color: Colors.grey,
+                  width: 1,
+                ),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              height: 130,
+              // width: 130, // given on parent container
+              alignment: Alignment.bottomRight,
+              child: Center(
+                child: Opacity(
+                  opacity: 0.5,
+                  child: Consumer<AudioModel>(
+                    builder: (context, audioModel, child){
+                      return IconButton(
+                        onPressed: () => audioModel.playOrPause(audio),
+                        color: Colors.white,
+                        icon: Icon(audioModel.audio != null && audioModel.audio.id == audio.id && audioModel.audioPlayer.state == AudioPlayerState.PLAYING ? Icons.pause:Icons.play_arrow),
+                        iconSize: 50,
+                      );
+                    },
+                  ),
+                ),
               ),
             ),
           ),
-        ),
-        SizedBox(height: _sizedBoxHeight),
-        Text('${audio.title}', style: Theme.of(context).textTheme.body2),
-        GestureDetector(
-          onTap: () => Navigator.pushNamed(context, '/explore/imam/details', arguments: audio.user),
-          child: Text('${audio.user.firstName} ${audio.user.lastName}', style: Theme.of(context).textTheme.caption),
-        ),
-      ],
+          SizedBox(height: _sizedBoxHeight),
+          Text('${audio.title}', style: Theme.of(context).textTheme.body2),
+          SizedBox(height: 4),
+          GestureDetector(
+            onTap: () => Navigator.pushNamed(context, '/explore/imam/details', arguments: audio.user),
+            child: Text('${audio.user.firstName} ${audio.user.lastName}', style: Theme.of(context).textTheme.caption),
+          ),
+        ],
+      ),
     );
   }
 }

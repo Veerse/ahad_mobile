@@ -20,7 +20,7 @@ class ExploreAll extends StatelessWidget {
         child: Center(
           child: ListView.builder(
             itemCount: allAudios.length,
-            itemBuilder: (context, index){
+            itemBuilder: (context, index) {
               return AudioItemList(allAudios.elementAt(index));
             },
           ),
@@ -28,9 +28,5 @@ class ExploreAll extends StatelessWidget {
       ),
     );
   }
-
-
-
-
 }
 
