@@ -100,11 +100,12 @@ class AudioModel extends ChangeNotifier {
     if (Platform.isIOS) {
       print('iOS notification');
       await _audioPlayer.setNotification(
-          title: _currentAudio.title,
-          artist: _currentAudio.user.firstName,
-          albumTitle: 'L\'labum',
-          imageUrl: "https://veerse.xyz/user/${_currentAudio.user.id}/avatar",
-
+        title: _currentAudio.title,
+        artist: _currentAudio.user.firstName,
+        albumTitle: 'L\'labum',
+        imageUrl: "https://veerse.xyz/user/${_currentAudio.user.id}/avatar",
+        duration: _audioDuration,
+        elapsedTime: _currentPosition
       );
     }
 
