@@ -33,14 +33,7 @@ class AudioItemList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        onLongPress: () {
-          Vibrate.canVibrate.then((v){
-            if (v == true){
-              Vibrate.feedback(FeedbackType.light);
-            }
-          });
-          showAudioDialog(context, a);
-        },
+        onLongPress: () => showAudioDialog(context, a),
         leading: Consumer<AudioModel>(
           builder: (context, audio, child) {
             return IconButton(
@@ -73,6 +66,12 @@ class AudioItemList extends StatelessWidget {
 }
 
 void showAudioDialog(context, Audio a) {
+  Vibrate.canVibrate.then((v){
+    if (v == true){
+      Vibrate.feedback(FeedbackType.light);
+    }
+  });
+
   slideDialog.showSlideDialog(
       context: context,
       child: Expanded(
