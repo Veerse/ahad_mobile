@@ -1,4 +1,5 @@
 
+import 'package:ahadmobile/providers/AudioModel.dart';
 import 'package:ahadmobile/providers/UserModel.dart';
 import 'package:ahadmobile/repository/UserRepository.dart';
 import 'package:flutter/material.dart';
@@ -150,6 +151,7 @@ class LoginPageState extends State<LoginPage> {
                           _isLoading = !_isLoading;
                         });
                         Provider.of<UserModel>(context, listen: false).logIn(u);
+                        Provider.of<AudioModel>(context, listen: false).userId = u.id;
                         Navigator.pushReplacementNamed(context, "/home");
                       }).catchError((e){
                         // AUTH ERROR

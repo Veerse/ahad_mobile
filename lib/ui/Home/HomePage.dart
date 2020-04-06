@@ -1,5 +1,6 @@
 
 import 'package:ahadmobile/providers/AudioModel.dart';
+import 'package:ahadmobile/ui/Common.dart';
 import 'package:ahadmobile/ui/Home/ExploreTab.dart';
 import 'package:ahadmobile/ui/Home/HomeTab.dart';
 import 'package:ahadmobile/ui/Home/LibraryTab.dart';
@@ -63,37 +64,7 @@ class HomePageState extends State<HomePage> {
         child: Icon(Icons.play_arrow, size: 32),
         //backgroundColor: Theme.of(context).primaryColor,
       ),*/
-      floatingActionButton: Consumer <AudioModel> (
-        builder: (context, audio, child){
-          if (audio.audioPlayer.state != null && audio.audioPlayer.state != AudioPlayerState.STOPPED) {
-            return GestureDetector(
-              onLongPress: () {
-                Vibrate.canVibrate.then((v){
-                  if (v == true){
-                    Vibrate.feedback(FeedbackType.light);
-                  }
-                });
-
-                Navigator.pushNamed(context, '/player');
-              },
-              child: FloatingActionButton(
-                onPressed: (){
-                  Vibrate.canVibrate.then((v){
-                    if (v == true){
-                      Vibrate.feedback(FeedbackType.light);
-                    }
-                  });
-                  Provider.of<AudioModel>(context, listen: false).playOrPause();
-                },
-                child: Icon(audio.audioPlayer.state == AudioPlayerState.PLAYING ? Icons.pause:Icons.play_arrow, size: 32),
-                //backgroundColor: Theme.of(context).primaryColor,
-              ),
-            );
-          } else {
-            return Container();
-          }
-        },
-      ),
+      floatingActionButton: FloatingActionPlay(),
       bottomNavigationBar: BubbleBottomBar(
           //fabLocation: BubbleBottomBarFabLocation.end, //new
           opacity: .2,

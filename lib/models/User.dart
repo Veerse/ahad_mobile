@@ -10,6 +10,7 @@ class User {
   String city;
   String country;
   String avatarPath;
+  String coverPath;
   int personType;
 
   User(
@@ -23,6 +24,7 @@ class User {
         this.city,
         this.country,
         this.avatarPath,
+        this.coverPath,
         this.personType});
 
   User.fromJson(Map<String, dynamic> json) {
@@ -36,6 +38,7 @@ class User {
     city = json['City'];
     country = json['Country'];
     avatarPath = json['AvatarPath'];
+    coverPath = json['CoverPath'];
     personType = json['PersonType'];
   }
 
@@ -51,6 +54,7 @@ class User {
     data['City'] = this.city;
     data['Country'] = this.country;
     data['AvatarPath'] = this.avatarPath;
+    data['CoverPath'] = this.coverPath;
     data['PersonType'] = this.personType;
     return data;
   }

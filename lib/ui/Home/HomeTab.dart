@@ -1,10 +1,12 @@
 
-import 'package:ahadmobile/blocs/HomeTabs/HomeTabBloc.dart';
-import 'package:ahadmobile/blocs/HomeTabs/HomeTabEvents.dart';
-import 'package:ahadmobile/blocs/HomeTabs/HomeTabStates.dart';
+import 'package:ahadmobile/blocs/HomeTabs/HomeBloc.dart';
+import 'package:ahadmobile/blocs/HomeTabs/HomeEvents.dart';
+import 'package:ahadmobile/blocs/HomeTabs/HomeStates.dart';
+import 'package:ahadmobile/models/Announcement.dart';
 import 'package:ahadmobile/models/Audio.dart';
 import 'package:ahadmobile/providers/AudioModel.dart';
 import 'package:ahadmobile/providers/UserModel.dart';
+import 'package:ahadmobile/ui/Common.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,17 +17,15 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-const double _padding = 16;
 const double _sizedBoxHeight = 16;
 
 class HomeTab extends StatelessWidget{
   final RefreshController _refreshController = new RefreshController();
-  final HomeTabBloc _homeTabBloc = new HomeTabBloc();
+  final HomeBloc _homeTabBloc = new HomeBloc();
 
   @override
   Widget build(BuildContext context) {
     return SmartRefresher(
-
       controller: _refreshController,
       onRefresh: (){
         Vibrate.canVibrate.then((v){
@@ -33,182 +33,213 @@ class HomeTab extends StatelessWidget{
             Vibrate.feedback(FeedbackType.light);
           }
         });
-        _homeTabBloc.add(FetchHomeTab(userId: Provider.of<UserModel>(context, listen: false).user.id));
+        _homeTabBloc.add(FetchHome(userId: Provider.of<UserModel>(context, listen: false).user.id));
         _refreshController.refreshCompleted();
       },
       child: BlocBuilder(
-        bloc: _homeTabBloc,
-        builder: (context, state) {
-          if (state is HomeTabInitial) {
-            _homeTabBloc.add(FetchHomeTab(userId: Provider.of<UserModel>(context, listen: false).user.id));
-            return Center(
-              child: SpinKitFoldingCube(
-                color: Colors.lightGreen,
-                size: 25.0,
-              ),
-            );
-          } else {
-            return SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                //mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  SizedBox(height: _sizedBoxHeight),
-                  _FeaturedAudio(_homeTabBloc), // Featured Audio
-                  _separationWidget(),
-                  _Announcement(_homeTabBloc), // Announcement
-                  _separationWidget(),
-                  /* _LastImamsAudios(_homeTabBloc), // Last imams audios
+          bloc: _homeTabBloc,
+          builder: (context, state) {
+            if (state is HomeInitial) {
+              _homeTabBloc.add(FetchHome(userId: Provider.of<UserModel>(context, listen: false).user.id));
+              return Center(
+                child: SpinKitFoldingCube(
+                  color: Colors.lightGreen,
+                  size: 25.0,
+                ),
+              );
+            } else if (state is HomeLoading) {
+              return Center(
+                child: SpinKitFoldingCube(
+                  color: Colors.lightGreen,
+                  size: 25.0,
+                ),
+              );
+            } else if (state is HomeLoaded) {
+              return SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  //mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    SizedBox(height: _sizedBoxHeight),
+                    _FeaturedAudio(state.featuredAudio), // Featured Audio
+                    _SeparationWidget(),
+                    _Announcement(state.announcement), // Announcement
+                    _SeparationWidget(),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      //mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Expanded(
+                            child: _LastListenedAudio(state.lastListenedAudio)
+                        ),
+                        Expanded(
+                          child: _RandomAudio(state.randomAudio),
+                        ),
+                      ],
+                    ),
+                    _SeparationWidget(),
+                    /* _LastImamsAudios(_homeTabBloc), // Last imams audios
             _separationWidget(),
             _LastMosquesAudios(_homeTabBloc), // Last mosques audios*/
-                  SizedBox(height: _sizedBoxHeight,),
-                ],
-              ),
-            );
+                    SizedBox(height: _sizedBoxHeight*4),
+                  ],
+                ),
+              );
+            } else if (state is HomeLoadFailure) {
+              return Center(
+                child: Text('Load failure ${state.e.toString()}'),
+              );
+            } else {
+              return Text('Unknown state');
+            }
           }
-        }
-    ),
+      ),
     );
   }
 }
-class _separationWidget extends StatelessWidget{
+class _SeparationWidget extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
         SizedBox(height: _sizedBoxHeight),
         Divider(),
-        SizedBox(height: _sizedBoxHeight)
+        SizedBox(height: _sizedBoxHeight),
       ],
     );
   }
 }
 
 class _FeaturedAudio extends StatelessWidget {
-  final HomeTabBloc _homeTabBloc;
-  _FeaturedAudio(this._homeTabBloc);
+  final Audio featuredAudio;
+  _FeaturedAudio(this.featuredAudio);
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeTabBloc, HomeTabState>(
-      bloc: _homeTabBloc,
-      builder: (context, state){
-        if(state is HomeTabLoaded){
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text('En vedette', style: Theme.of(context).textTheme.title),
-              SizedBox(height: _sizedBoxHeight),
-              Row(
-                children: <Widget>[
-                  //_AudioBox(),
-                  GestureDetector(
-                    onTap: () => print('tapped'),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: const Color(0xff7c94b6),
-                        image: DecorationImage(
-                          image: NetworkImage('https://veerse.xyz/user/${state.featuredAudio.user.id}/avatar'),
-                          fit: BoxFit.cover,
-                        ),
-                        border: Border.all(
-                          color: Colors.grey,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      height: 130,
-                      width: 130,
-                      alignment: Alignment.bottomRight,
-                      child: Center(
-                        child: Opacity(
-                          opacity: 0.5,
-                          child: Consumer<AudioModel>(
-                            builder: (context, audio, child){
-                              return IconButton(
-                                onPressed: () => audio.playOrPause(state.featuredAudio),
-                                color: Colors.white,
-                                icon: Icon(audio.audio != null && audio.audio.id == state.featuredAudio.id && audio.audioPlayer.state == AudioPlayerState.PLAYING ? Icons.pause:Icons.play_arrow),
-                                iconSize: 50,
-                              );
-                            },
-                          ),
-                        ),
-                      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text('En vedette', style: Theme.of(context).textTheme.title),
+        SizedBox(height: _sizedBoxHeight),
+        Row(
+          children: <Widget>[
+            //_AudioBox(),
+            GestureDetector(
+              onLongPress: () => showAudioDialog(context, featuredAudio),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xff7c94b6),
+                  image: DecorationImage(
+                    image: NetworkImage('https://veerse.xyz/user/${featuredAudio.user.id}/avatar'),
+                    fit: BoxFit.cover,
+                  ),
+                  border: Border.all(
+                    color: Colors.grey,
+                    width: 1,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                height: 130,
+                width: 130,
+                alignment: Alignment.bottomRight,
+                child: Center(
+                  child: Opacity(
+                    opacity: 0.5,
+                    child: Consumer<AudioModel>(
+                      builder: (context, audio, child){
+                        return IconButton(
+                          onPressed: () => audio.playOrPause(featuredAudio),
+                          color: Colors.white,
+                          icon: Icon(audio.audio != null && audio.audio.id == featuredAudio.id && audio.audioPlayer.state == AudioPlayerState.PLAYING ? Icons.pause:Icons.play_arrow),
+                          iconSize: 50,
+                        );
+                      },
                     ),
                   ),
-                  SizedBox(width: 16),
-                  Flexible(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text('${state.featuredAudio.title}', style: Theme.of(context).textTheme.body2,),
-                          Text('${state.featuredAudio.user.firstName} ${state.featuredAudio.user.lastName}', style: Theme.of(context).textTheme.caption),
-                          SizedBox(height: 16),
-                          Text('${state.featuredAudio.description}',
-                            textAlign: TextAlign.justify,
-                            maxLines: 4,
-                            overflow: TextOverflow.fade,
-                          )
-                        ],
-                      )
-                  )
-                ],
+                ),
               ),
-            ],
-          ) ;
-        } else{
-          return SpinKitFoldingCube(
-            color: Colors.lightGreen,
-            size: 25.0,
-          );
-        }
-      },
+            ),
+            SizedBox(width: 16),
+            Flexible(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text('${featuredAudio.title}', style: Theme.of(context).textTheme.body2,),
+                    GestureDetector(
+                      onTap: () => Navigator.pushNamed(context, '/explore/imam/details', arguments: featuredAudio.user),
+                      child: Text('${featuredAudio.user.firstName} ${featuredAudio.user.lastName}', style: Theme.of(context).textTheme.caption),
+                    ),
+                    SizedBox(height: 16),
+                    Text('${featuredAudio.description}',
+                      textAlign: TextAlign.justify,
+                      maxLines: 4,
+                      overflow: TextOverflow.fade,
+                    )
+                  ],
+                )
+            )
+          ],
+        ),
+      ],
     );
   }
 }
 
 class _Announcement extends StatelessWidget{
-  final HomeTabBloc _homeTabBloc;
-  _Announcement(this._homeTabBloc);
+  final Announcement announcement;
+  _Announcement(this.announcement);
 
   @override
   Widget build(BuildContext context) {
-    return  BlocBuilder<HomeTabBloc, HomeTabState>(
-      bloc: _homeTabBloc,
-      builder: (context, state){
-        if(state is HomeTabInitial){
-          return Text('initial');
-        }
-        if(state is HomeTabLoading){
-          return SpinKitFoldingCube(
-            color: Colors.lightGreen,
-            size: 25.0,
-          );
-        }
-        if(state is HomeTabLoaded){
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text('${state.announcement.announcementTitle}', style: Theme.of(context).textTheme.title),
-              Text('${DateFormat("dd-MM-yyyy").format(state.announcement.announcementStartDate)}', style: Theme.of(context).textTheme.caption),
-              SizedBox(height: _sizedBoxHeight,),
-              Text('${state.announcement.announcementBody}'),
-            ],
-          );
-        }
-        if(state is HomeTabLoadFailure){
-          return Text(state.e.toString());
-        }
-        return Text('NOT FOUND STATE');
-      },
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text('${announcement.announcementTitle}', style: Theme.of(context).textTheme.title),
+        Text('${DateFormat("dd-MM-yyyy").format(announcement.announcementStartDate)}', style: Theme.of(context).textTheme.caption),
+        SizedBox(height: _sizedBoxHeight,),
+        Text('${announcement.announcementBody}'),
+      ],
+    );
+  }
+}
+
+class _LastListenedAudio extends StatelessWidget {
+  final Audio lastListenedAudio;
+  _LastListenedAudio(this.lastListenedAudio);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text('Reprendre', style: Theme.of(context).textTheme.title),
+        SizedBox(height: _sizedBoxHeight),
+        _AudioBoxItem(lastListenedAudio)
+      ],
+    );
+  }
+}
+
+class _RandomAudio extends StatelessWidget {
+  final Audio randomAudio;
+  _RandomAudio(this.randomAudio);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text('Au hasard', style: Theme.of(context).textTheme.title),
+        SizedBox(height: _sizedBoxHeight),
+        _AudioBoxItem(randomAudio)
+      ],
     );
   }
 }
 
 class _LastImamsAudios extends StatelessWidget{
-  final HomeTabBloc _homeTabBloc;
-  _LastImamsAudios(this._homeTabBloc);
+  final HomeBloc _homeBloc;
+  _LastImamsAudios(this._homeBloc);
 
   @override
   Widget build(BuildContext context) {
@@ -217,13 +248,13 @@ class _LastImamsAudios extends StatelessWidget{
       children: <Widget>[
         Text('Derniers audios de mes Imams', style: Theme.of(context).textTheme.title),
         SizedBox(height: _sizedBoxHeight),
-        BlocBuilder<HomeTabBloc, HomeTabState>(
-          bloc: _homeTabBloc,
+        BlocBuilder<HomeBloc, HomeState>(
+          bloc: _homeBloc,
           builder: (context, state){
-            if(state is HomeTabInitial){
+            if(state is HomeInitial){
               return Text('Initial');
             }
-            if(state is HomeTabLoaded){
+            if(state is HomeLoaded){
               return Container(
                 height: 170,
                 child: ListView.builder(
@@ -247,7 +278,7 @@ class _LastImamsAudios extends StatelessWidget{
 }
 
 class _LastMosquesAudios extends StatelessWidget{
-  final HomeTabBloc _homeTabBloc;
+  final HomeBloc _homeTabBloc;
   _LastMosquesAudios(this._homeTabBloc);
 
   @override
@@ -257,22 +288,25 @@ class _LastMosquesAudios extends StatelessWidget{
       children: <Widget>[
         Text('Derniers audios de mes Mosquees', style: Theme.of(context).textTheme.title),
         SizedBox(height: _sizedBoxHeight),
-        BlocBuilder<HomeTabBloc, HomeTabState>(
+        BlocBuilder<HomeBloc, HomeState>(
           bloc: _homeTabBloc,
           builder: (context, state){
-            if(state is HomeTabInitial){
+            if(state is HomeInitial){
               return Text('Initial');
             }
-            if(state is HomeTabLoaded){
+            if(state is HomeLoaded){
               return Container(
-                height: 170,
+                height: 150,
                 child: ListView.builder(
                     physics: ClampingScrollPhysics(),
                     shrinkWrap: true,
                     scrollDirection: Axis.horizontal,
                     itemCount: state.lastImamsAudios.length,
                     itemBuilder: (BuildContext context, int index){
-                      return _AudioBoxItem(state.lastImamsAudios.elementAt(index));
+                      return Container(
+                        width: 150,
+                        child: _AudioBoxItem(state.lastImamsAudios.elementAt(index)),
+                      );
                     }
                 ),
               );
@@ -287,27 +321,62 @@ class _LastMosquesAudios extends StatelessWidget{
 }
 
 class _AudioBoxItem extends StatelessWidget{
-  final Audio _audio;
+  final Audio audio;
 
-  _AudioBoxItem(this._audio);
+  _AudioBoxItem(this.audio);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        SizedBox(
-          height: 120, // (b) - see below
-          width: 120,
-          child: Card(
-            color: Colors.red,
+    return Container(
+      width: 130,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          GestureDetector(
+            onLongPress: () => showAudioDialog(context, audio),
+            child: Container(
+              decoration: BoxDecoration(
+                color: const Color(0xff7c94b6),
+                image: DecorationImage(
+                  image: NetworkImage('https://veerse.xyz/user/${audio.user.id}/avatar'),
+                  fit: BoxFit.cover,
+                ),
+                border: Border.all(
+                  color: Colors.grey,
+                  width: 1,
+                ),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              height: 130,
+              // width: 130, // given on parent container
+              alignment: Alignment.bottomRight,
+              child: Center(
+                child: Opacity(
+                  opacity: 0.5,
+                  child: Consumer<AudioModel>(
+                    builder: (context, audioModel, child){
+                      return IconButton(
+                        onPressed: () => audioModel.playOrPause(audio),
+                        color: Colors.white,
+                        icon: Icon(audioModel.audio != null && audioModel.audio.id == audio.id && audioModel.audioPlayer.state == AudioPlayerState.PLAYING ? Icons.pause:Icons.play_arrow),
+                        iconSize: 50,
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
           ),
-        ),
-        SizedBox(
-          width: 110,
-          height: 40, // MUST be equals ton container (a) height - sizedBox (b) height
-          child: Text('${_audio.title}', overflow: TextOverflow.fade),
-        )
-      ],
+          SizedBox(height: _sizedBoxHeight),
+          Text('${audio.title}', style: Theme.of(context).textTheme.body2),
+          SizedBox(height: 4),
+          GestureDetector(
+            onTap: () => Navigator.pushNamed(context, '/explore/imam/details', arguments: audio.user),
+            child: Text('${audio.user.firstName} ${audio.user.lastName}', style: Theme.of(context).textTheme.caption),
+          ),
+        ],
+      ),
     );
   }
 }

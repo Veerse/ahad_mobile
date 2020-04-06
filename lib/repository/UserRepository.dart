@@ -45,4 +45,15 @@ class UserRepository {
     print('Response : $response');
     return User.fromJson(response);
   }
+
+  Future<List<User>> fetchAllImams () async {
+    final queryParameters = {
+      'userType': '2', // Imam
+    };
+    final uri = Uri.https('veerse.xyz', '/users', queryParameters);
+
+    var response = await APIHelper().request(uri.toString(), RequestType.GET_WITH_PARAMETERS);
+    List<User> imams = (response as List).map((i)=>User.fromJson(i)).toList();
+    return imams;
+  }
 }
