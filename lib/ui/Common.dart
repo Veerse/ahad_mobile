@@ -59,7 +59,29 @@ class AudioItemList extends StatelessWidget {
         ),
         dense: true,
         title: Text (a.title),
-        subtitle: Text('${a.user.firstName} ${a.user.lastName} - ${printDuration(a.length)}'),
+        subtitle: FutureBuilder(
+          future: AudioRepository().fetchListening(Provider.of<UserModel>(context, listen:false).user.id, a.id),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return Text.rich(
+                TextSpan(
+                  text: '${a.user.firstName} ${a.user.lastName} - ', // default text style
+                  children: <TextSpan>[
+                    ((a.length - snapshot.data.position)/60).floor() <= 0  ? TextSpan(text: 'Terminé', style: TextStyle(fontWeight: FontWeight.bold)):TextSpan(),
+                    snapshot.data.position != 0 && ((a.length - snapshot.data.position)/60).floor() > 0 ? TextSpan(text: '${((a.length - snapshot.data.position)/60).floor()} mn restantes'):TextSpan(),
+                    snapshot.data.position == 0 ? TextSpan(text: '${printDuration(a.length)}'):TextSpan(),
+                  ],
+                ),
+              );
+            } else {
+              return SpinKitThreeBounce(
+                color: Colors.grey,
+                size: 15,
+              );
+            }
+          },
+        ),
+
       ),
     );
   }

@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 import 'package:ahadmobile/apihelper/customexception.dart';
 
-enum RequestType { GET, GET_WITH_PARAMETERS, POST, PUT, DELETE }
+enum RequestType { GET, GET_WITH_PARAMETERS, POST, PUT, DELETE_WITH_PARAMETERS }
 
 class APIHelper {
   // 10.0.2.2 on Android, localhost on iOS
@@ -39,8 +39,8 @@ class APIHelper {
         case RequestType.PUT:
           response = await http.put(_baseURI + resource);
           break;
-        case RequestType.DELETE:
-          response = await http.delete(_baseURI + resource);
+        case RequestType.DELETE_WITH_PARAMETERS:
+          response = await http.delete(resource, headers: {HttpHeaders.cookieHeader: jwtCookie == null ? null:new Cookie("ahad_token", jwtCookie).toString()});
           break;
       }
       responseJSON = _returnResponse(response);
@@ -56,6 +56,7 @@ class APIHelper {
         var responseJson = json.decode(utf8.decode(response.bodyBytes));
         return responseJson;
       case 201:
+        //print('LONGUEUR DE LA MERDE ${response == null}');
         var responseJson = json.decode(utf8.decode(response.bodyBytes));
         return responseJson;
       case 400:

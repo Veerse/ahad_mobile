@@ -3,8 +3,10 @@ import 'package:ahadmobile/blocs/HomeTabs/Explore/ExploreImamBloc.dart';
 import 'package:ahadmobile/blocs/HomeTabs/Explore/ExploreImamEvents.dart';
 import 'package:ahadmobile/blocs/HomeTabs/Explore/ExploreImamStates.dart';
 import 'package:ahadmobile/models/Audio.dart';
+import 'package:ahadmobile/models/Favs.dart';
 import 'package:ahadmobile/models/User.dart';
 import 'package:ahadmobile/providers/UserModel.dart';
+import 'package:ahadmobile/repository/FavRepository.dart';
 import 'package:ahadmobile/ui/Common.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -49,6 +51,57 @@ class ExploreImamDetails extends StatelessWidget {
   }
 }
 
+class _FavButton extends StatefulWidget {
+  final int imamId;
+  final int userId;
+  _FavButton(this.imamId, this.userId);
+
+  @override
+  State<StatefulWidget> createState() => _FavButtonState(imamId, userId);
+}
+
+class _FavButtonState extends State<_FavButton> {
+  final FavRepository favRepository = new FavRepository();
+
+  final int imamId;
+  final int userId;
+  _FavButtonState(this.imamId, this.userId);
+
+  bool isFaved = false;
+
+
+  @override
+  void initState() {
+    super.initState();
+
+    favRepository.fetchImamIsFaved(imamId, userId).then((v){
+      setState(() {
+        isFaved = true;
+      });
+    }).catchError((e){
+      setState(() {
+        isFaved = false;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      onPressed: () {
+        setState(() {
+          if (!isFaved)
+            favRepository.createImamFav(new FavImam(userId: userId, imamId: imamId, isFaved: true));
+          if(isFaved)
+            favRepository.deleteImamFav(new FavImam(userId: userId, imamId: imamId, isFaved: true));
+          isFaved = ! isFaved;
+        });
+      },
+      icon: isFaved ? Icon(Icons.favorite, color: Colors.red):Icon(Icons.favorite_border),
+    );
+  }
+}
+
 class _ImamDetails extends StatelessWidget {
   final User imam;
   final List<Audio> audios;
@@ -69,6 +122,14 @@ class _ImamDetails extends StatelessWidget {
               background: Image.network('https://veerse.xyz/user/${imam.id}/cover', fit: BoxFit.cover),
             ),
             pinned: true,
+            actions: <Widget>[
+              Center(
+                child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: _FavButton(imam.id, Provider.of<UserModel>(context, listen: false).user.id)
+                ),
+              )
+            ],
           ),
 
           SliverToBoxAdapter(
