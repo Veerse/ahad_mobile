@@ -1,7 +1,7 @@
 
 import 'package:ahadmobile/apihelper/apihelper.dart';
 import 'package:ahadmobile/models/Audio.dart';
-import 'package:ahadmobile/models/Listening.dart';
+import 'package:ahadmobile/models/AudioInfo.dart';
 
 class AudioRepository {
   APIHelper _apiHelper = APIHelper();
@@ -61,16 +61,33 @@ class AudioRepository {
     return audios;
   }
 
-  //   Listening is the position of the audio (for example, user is at position
-  //  00:12:33 of audio A
+  //    Listening and IsTBL.
+  //    IsTBL : isToBeListened (to be listened later)
+  //    Listening : the position of the audio (example: user is at position
+  //  00:12:33 of audio A)
+  Future<AudioInfo> fetchAudioInfo(int userId, int audioId) async {
+    final queryParameters = {
+      'userId': userId.toString(),
+      'audioId':audioId.toString()
+    };
+
+    final uri = Uri.https('veerse.xyz', '/audioinfo', queryParameters);
+    var response = await _apiHelper.request(uri.toString(), RequestType.GET_WITH_PARAMETERS);
+    print(response);
+    return AudioInfo.fromJson(response);
+  }
+
+  //    Listening : the position of the audio (example: user is at position
+  //  00:12:33 of audio A)
   Future<Listening> fetchListening(int userId, int audioId) async {
     final queryParameters = {
       'userId': userId.toString(),
       'audioId':audioId.toString()
     };
+
     final uri = Uri.https('veerse.xyz', '/listening', queryParameters);
     var response = await _apiHelper.request(uri.toString(), RequestType.GET_WITH_PARAMETERS);
-    return new Listening.fromJson(response);
+    return Listening.fromJson(response);
   }
 
   Future<void> postListening(Listening l) async {

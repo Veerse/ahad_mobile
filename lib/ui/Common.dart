@@ -53,23 +53,20 @@ class AudioItemList extends StatelessWidget {
             );
           },
         ),
-        trailing: IconButton(
-          onPressed: () => print('Added to favorites'),
-          icon: Icon(Icons.add),
-        ),
+        trailing: _ListenLaterButton(),
         dense: true,
         title: Text (a.title),
         subtitle: FutureBuilder(
-          future: AudioRepository().fetchListening(Provider.of<UserModel>(context, listen:false).user.id, a.id),
+          future: AudioRepository().fetchAudioInfo(Provider.of<UserModel>(context, listen:false).user.id, a.id),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return Text.rich(
                 TextSpan(
                   text: '${a.user.firstName} ${a.user.lastName} - ', // default text style
                   children: <TextSpan>[
-                    ((a.length - snapshot.data.position)/60).floor() <= 0  ? TextSpan(text: 'Terminé', style: TextStyle(fontWeight: FontWeight.bold)):TextSpan(),
-                    snapshot.data.position != 0 && ((a.length - snapshot.data.position)/60).floor() > 0 ? TextSpan(text: '${((a.length - snapshot.data.position)/60).floor()} mn restantes'):TextSpan(),
-                    snapshot.data.position == 0 ? TextSpan(text: '${printDuration(a.length)}'):TextSpan(),
+                    ((a.length - snapshot.data.listening.position)/60).floor() <= 0  ? TextSpan(text: 'Terminé', style: TextStyle(fontWeight: FontWeight.bold)):TextSpan(),
+                    snapshot.data.listening.position != 0 && ((a.length - snapshot.data.listening.position)/60).floor() > 0 ? TextSpan(text: '${((a.length - snapshot.data.listening.position)/60).floor()} mn restantes'):TextSpan(),
+                    snapshot.data.listening.position == 0 ? TextSpan(text: '${printDuration(a.length)}'):TextSpan(),
                   ],
                 ),
               );
@@ -85,6 +82,23 @@ class AudioItemList extends StatelessWidget {
       ),
     );
   }
+}
+
+class _ListenLaterButton extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _ListenLaterState();
+
+}
+
+class _ListenLaterState extends State<_ListenLaterButton> {
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      onPressed: () => print('Added to favorites'),
+      icon: Icon(Icons.add),
+    );
+  }
+
 }
 
 void showAudioDialog(context, Audio a) {

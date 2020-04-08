@@ -160,11 +160,13 @@ class LoginPageState extends State<LoginPage> {
                         });
                         print('error on login ${e.toString()}');
                         if(e.toString().contains("422")){
+                          globalKey.currentState.hideCurrentSnackBar();
                           globalKey.currentState.showSnackBar(SnackBar(
                             backgroundColor: Theme.of(context).errorColor,
                             content: Text('Mot de passe ou login erroné 😬'),
                           ));
                         } else {
+                          globalKey.currentState.hideCurrentSnackBar();
                           globalKey.currentState.showSnackBar(SnackBar(
                             backgroundColor: Theme.of(context).errorColor,
                             content: Text('Impossible de joindre le serveur 😞'),
@@ -172,6 +174,7 @@ class LoginPageState extends State<LoginPage> {
                         }
                       });
                     } else {
+                      globalKey.currentState.hideCurrentSnackBar();
                       globalKey.currentState.showSnackBar(SnackBar(
                         backgroundColor: Theme.of(context).hintColor,
                         content: Text('Champs incorrects 😕'),

@@ -5,8 +5,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatelessWidget {
+
+
   @override
   Widget build(BuildContext context) {
 
@@ -29,6 +32,21 @@ class ProfilePage extends StatelessWidget {
               Expanded(
                 child: SizedBox(),
               ),
+              /*FutureBuilder(
+                future: SharedPreferences.getInstance(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return RaisedButton(
+                      onPressed: () {
+                        snapshot.data.setString("theme", "orange");
+                      },
+                      child: Text('change color'),
+                    );
+                  } else {
+                    return Container();
+                  }
+                },
+              ),*/
               RaisedButton(
                 onPressed: () {
                   showDialog(

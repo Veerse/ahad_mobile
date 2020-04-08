@@ -36,7 +36,8 @@ class ExploreAll extends StatelessWidget {
                         return AudioItemList(allAudios.elementAt(index));
                       },
                     ),
-                  )
+                  ),
+                  SizedBox(height: 64)
                 ],
               ),
             ),
