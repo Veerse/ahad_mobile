@@ -12,6 +12,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:provider/provider.dart';
 
 class ExploreTagDetails extends StatelessWidget {
@@ -91,6 +92,11 @@ class _FavButtonState extends State<_FavButton> {
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: () {
+        Vibrate.canVibrate.then((v){
+          if (v == true){
+            Vibrate.feedback(FeedbackType.light);
+          }
+        });
         setState(() {
           if (!isFaved)
             favRepository.createTagFav(new FavTag(userId: userId, tagId: tagId, isFaved: true));

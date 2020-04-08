@@ -1,5 +1,6 @@
 
 import 'package:ahadmobile/models/Audio.dart';
+import 'package:ahadmobile/models/AudioInfo.dart';
 import 'package:ahadmobile/providers/AudioModel.dart';
 import 'package:ahadmobile/providers/UserModel.dart';
 import 'package:ahadmobile/repository/AudioRepository.dart';
@@ -32,35 +33,57 @@ class AudioItemList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: ListTile(
-        onLongPress: () => showAudioDialog(context, a),
-        leading: Consumer<AudioModel>(
-          builder: (context, audio, child) {
-            return IconButton(
-                onPressed: () {
-                  Vibrate.canVibrate.then((v){
-                    if (v == true){
-                      Vibrate.feedback(FeedbackType.light);
-                    }
-                  });
-                  audio.playOrPause(a);
-                },
-                icon: Icon(
-                  audio.audio != null &&
-                      audio.audio.id == a.id &&
-                      audio.audioPlayer.state == AudioPlayerState.PLAYING
-                      ? Icons.pause:Icons.play_arrow,)
-            );
-          },
-        ),
-        trailing: _ListenLaterButton(),
-        dense: true,
-        title: Text (a.title),
-        subtitle: FutureBuilder(
-          future: AudioRepository().fetchAudioInfo(Provider.of<UserModel>(context, listen:false).user.id, a.id),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return Text.rich(
+      child: FutureBuilder(
+        future: AudioRepository().fetchAudioInfo(Provider.of<UserModel>(context, listen:false).user.id, a.id),
+        builder: (context, snapshot) {
+          return ListTile(
+            onLongPress: () => showAudioDialog(context, a),
+            leading: Consumer<AudioModel>(
+              builder: (context, audio, child) {
+                return IconButton(
+                    onPressed: () {
+                      Vibrate.canVibrate.then((v){
+                        if (v == true){
+                          Vibrate.feedback(FeedbackType.light);
+                        }
+                      });
+                      audio.playOrPause(a);
+                    },
+                    icon: Icon(
+                      audio.audio != null &&
+                          audio.audio.id == a.id &&
+                          audio.audioPlayer.state == AudioPlayerState.PLAYING
+                          ? Icons.pause:Icons.play_arrow,)
+                );
+              },
+            ),
+            trailing: snapshot.hasData ? _ListenLaterButton(snapshot.data.isTbl, a.id):null,
+            dense: true,
+            title: Text (a.title),
+            subtitle: Text.rich(
+              TextSpan(
+                text: '${a.user.firstName} ${a.user.lastName} - ', // default text style
+                children: snapshot.hasData ?
+                <TextSpan>[
+                  ((a.length - snapshot.data.listening.position)/60).floor() <= 0  ? TextSpan(text: 'Terminé', style: TextStyle(fontWeight: FontWeight.bold)):TextSpan(),
+                  snapshot.data.listening.position != 0 && ((a.length - snapshot.data.listening.position)/60).floor() > 0 ? TextSpan(text: '${((a.length - snapshot.data.listening.position)/60).floor()} mn restantes'):TextSpan(),
+                  snapshot.data.listening.position == 0 ? TextSpan(text: '${printDuration(a.length)} '):TextSpan(),
+                ]:
+                <TextSpan>[
+                    TextSpan(text: 'Chargement ...')
+                ],
+              ),
+            )
+          );
+        },
+      )
+    );
+  }
+}
+
+/*
+
+return Text.rich(
                 TextSpan(
                   text: '${a.user.firstName} ${a.user.lastName} - ', // default text style
                   children: <TextSpan>[
@@ -70,32 +93,46 @@ class AudioItemList extends StatelessWidget {
                   ],
                 ),
               );
-            } else {
-              return SpinKitThreeBounce(
-                color: Colors.grey,
-                size: 15,
-              );
-            }
-          },
-        ),
 
-      ),
-    );
-  }
-}
+ */
 
 class _ListenLaterButton extends StatefulWidget {
+  final bool isTbl;
+  final int audioId;
+  _ListenLaterButton(this.isTbl, this.audioId);
+
   @override
-  State<StatefulWidget> createState() => _ListenLaterState();
+  State<StatefulWidget> createState() => _ListenLaterState(isTbl, audioId);
 
 }
 
 class _ListenLaterState extends State<_ListenLaterButton> {
+
+  final int audioId;
+  bool isTbl;
+
+  _ListenLaterState(this.isTbl, this.audioId);
+
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      onPressed: () => print('Added to favorites'),
-      icon: Icon(Icons.add),
+      onPressed: (){
+        Vibrate.canVibrate.then((v){
+          if (v == true){
+            Vibrate.feedback(FeedbackType.light);
+          }
+        });
+        setState(() {
+          if (isTbl) {
+            AudioRepository().deleteAudioQueueItem(Provider.of<UserModel>(context, listen: false).user.id, audioId);
+            isTbl = false;
+          } else {
+            AudioRepository().postAudioQueueItem(new ListeningQueueItem(userId: Provider.of<UserModel>(context, listen: false).user.id, audioId: audioId));
+            isTbl = true;
+          }
+        });
+      },
+      icon: Icon(!isTbl ? Icons.add:Icons.play_for_work),
     );
   }
 

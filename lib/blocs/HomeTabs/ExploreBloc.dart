@@ -2,7 +2,6 @@
 
 import 'package:ahadmobile/blocs/HomeTabs/ExploreEvents.dart';
 import 'package:ahadmobile/blocs/HomeTabs/ExploreStates.dart';
-import 'package:ahadmobile/models/User.dart';
 import 'package:ahadmobile/repository/AudioRepository.dart';
 import 'package:ahadmobile/repository/TagRepository.dart';
 import 'package:ahadmobile/repository/UserRepository.dart';

@@ -1,7 +1,6 @@
 
 import 'package:ahadmobile/models/Audio.dart';
 import 'package:ahadmobile/models/AudioInfo.dart';
-import 'package:ahadmobile/providers/UserModel.dart';
 import 'package:ahadmobile/repository/AudioRepository.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
@@ -79,7 +78,7 @@ class AudioModel extends ChangeNotifier {
       //  instead. We do p.inMilliseconds%20000 < 150 because p.inMilliseconds%20000 == 0
       //  will never be true, position goes forward too fast to be catch
       //  at this exact moment
-      if (p.inMilliseconds%20000 < 150 && p.inSeconds > 0) {
+      if (p.inMilliseconds%20000 < 190 && p.inSeconds > 0) {
         await audioRepository.postListening(new Listening(audioId: _currentAudio.id, userId: _userId, position: p.inSeconds, date: DateTime.now()));
       }
       _currentPosition = p;

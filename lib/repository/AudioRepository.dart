@@ -2,6 +2,7 @@
 import 'package:ahadmobile/apihelper/apihelper.dart';
 import 'package:ahadmobile/models/Audio.dart';
 import 'package:ahadmobile/models/AudioInfo.dart';
+import 'package:ahadmobile/ui/Common.dart';
 
 class AudioRepository {
   APIHelper _apiHelper = APIHelper();
@@ -73,7 +74,6 @@ class AudioRepository {
 
     final uri = Uri.https('veerse.xyz', '/audioinfo', queryParameters);
     var response = await _apiHelper.request(uri.toString(), RequestType.GET_WITH_PARAMETERS);
-    print(response);
     return AudioInfo.fromJson(response);
   }
 
@@ -95,5 +95,73 @@ class AudioRepository {
       // TODO : error to fix here : error when posting listening FormatException: Unexpected end of input (at character 1)
       //print('error when posting listening ${e.toString()}');
     });
+  }
+
+  Future<List<Audio>> fetchLastAudioOfUsersImams(int userId) async {
+    final queryParameters = {
+      'userId': userId.toString(),
+    };
+    final uri = Uri.https('veerse.xyz', '/audio/lastimams', queryParameters);
+    var response = await _apiHelper.request(uri.toString(), RequestType.GET_WITH_PARAMETERS);
+
+    if(response != null)
+      return (response as List).map((i)=>Audio.fromJson(i)).toList();
+    else
+      return null;
+  }
+
+  Future<List<Audio>> fetchLastAudioOfUsersTags(int userId) async {
+    final queryParameters = {
+    'userId': userId.toString(),
+    };
+    final uri = Uri.https('veerse.xyz', '/audio/lasttags', queryParameters);
+    var response = await _apiHelper.request(uri.toString(), RequestType.GET_WITH_PARAMETERS);
+    if (response != null) {
+      return (response as List).map((i)=>Audio.fromJson(i)).toList();
+    } else {
+      return null;
+    }
+  }
+
+  Future<List<Audio>> fetchCurrentlyPlayingAudiosOfUser(int userId) async {
+    final queryParameters = {
+      'userId': userId.toString(),
+    };
+    final uri = Uri.https('veerse.xyz', '/audio/listening', queryParameters);
+    var response = await _apiHelper.request(uri.toString(), RequestType.GET_WITH_PARAMETERS);
+
+    if (response != null) {
+      return (response as List).map((i)=>Audio.fromJson(i)).toList();
+    } else {
+      return null;
+    }
+  }
+
+  Future<List<Audio>> fetchToBeListenedAudiosOfUser(int userId) async {
+    final queryParameters = {
+      'userId': userId.toString(),
+    };
+    final uri = Uri.https('veerse.xyz', '/audioqueue', queryParameters);
+    var response = await _apiHelper.request(uri.toString(), RequestType.GET_WITH_PARAMETERS);
+
+    if (response != null) {
+      return (response as List).map((i)=>Audio.fromJson(i)).toList();
+    } else {
+      return null;
+    }
+  }
+
+  Future<void> postAudioQueueItem (ListeningQueueItem item) async {
+    await _apiHelper.request('/audioqueue', RequestType.POST, item.toJson());
+  }
+
+  Future<void> deleteAudioQueueItem (int userId, int audioId) async {
+    final queryParameters = {
+      'userId': userId.toString(),
+      'audioId':audioId.toString(),
+    };
+    final uri = Uri.https('veerse.xyz', '/audioqueue', queryParameters);
+
+    await _apiHelper.request(uri.toString(), RequestType.DELETE_WITH_PARAMETERS);
   }
 }

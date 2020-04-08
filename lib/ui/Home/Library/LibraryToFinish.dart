@@ -4,16 +4,18 @@ import 'package:ahadmobile/ui/Common.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class ExploreAll extends StatelessWidget {
+class LibraryToFinish extends StatelessWidget {
+
 
   @override
   Widget build(BuildContext context) {
-    final List<Audio> allAudios = ModalRoute.of(context).settings.arguments;
-    allAudios.sort((a, b) => a.user.firstName.compareTo(b.user.firstName));
+    final List<Audio> audios = ModalRoute.of(context).settings.arguments;
+    if (audios != null)
+      audios.sort((a, b) => a.user.firstName.compareTo(b.user.firstName));
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Tous les audios'),
+        title: Text('A terminer'),
       ),
       floatingActionButton: FloatingActionPlay(),
       body: NotificationListener<OverscrollIndicatorNotification>(
@@ -21,7 +23,8 @@ class ExploreAll extends StatelessWidget {
             overScroll.disallowGlow();
             return null;
           },
-          child: SingleChildScrollView(
+          child: audios != null ?
+          SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: Column(
@@ -31,14 +34,29 @@ class ExploreAll extends StatelessWidget {
                   Center(
                     child: ListView.builder(
                       shrinkWrap: true,
-                      itemCount: allAudios.length,
+                      itemCount: audios.length,
                       itemBuilder: (context, index) {
-                        return AudioItemList(allAudios.elementAt(index));
+                        return AudioItemList(audios.elementAt(index));
                       },
                     ),
                   ),
                   SizedBox(height: 64)
                 ],
+              ),
+            ),
+          ):
+          Center(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 64),
+              child: RichText(
+                text: TextSpan(
+                    style: Theme.of(context).textTheme.subhead,
+                    children: [
+                      TextSpan(text: 'Les audios commencés et '),
+                      TextSpan(text: 'non terminés ', style: Theme.of(context).textTheme.body2,),
+                      TextSpan(text: 'apparaîtront automatiquement sur cette page.'),
+                    ]
+                ),
               ),
             ),
           )

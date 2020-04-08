@@ -9,6 +9,8 @@ import 'package:ahadmobile/ui/Home/Explore/ExploreImams.dart';
 import 'package:ahadmobile/ui/Home/Explore/ExploreTagDetails.dart';
 import 'package:ahadmobile/ui/Home/Explore/ExploreTags.dart';
 import 'package:ahadmobile/ui/Home/HomePage.dart';
+import 'package:ahadmobile/ui/Home/Library/LibraryToFinish.dart';
+import 'package:ahadmobile/ui/Home/Library/LibraryToListen.dart';
 import 'package:ahadmobile/ui/LoadingPage.dart';
 import 'package:ahadmobile/ui/LoginPage.dart';
 import 'package:ahadmobile/ui/OnboardingPage.dart';
@@ -90,6 +92,8 @@ class MyApp extends StatelessWidget {
         '/explore/tag/details': (context) => ExploreTagDetails(),
         '/explore/imams': (context) => ExploreImams(),
         '/explore/imam/details': (context) => ExploreImamDetails(),
+        '/library/tolisten': (context) => LibraryToListen(),
+        '/library/tofinish': (context) => LibraryToFinish(),
       },
       // The home depends on if the user is logged or not
       home: FutureBuilder(
