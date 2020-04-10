@@ -44,7 +44,7 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      /*appBar: AppBar(
         title: Text('Muslimy'),
         actions: <Widget>[
           IconButton(
@@ -52,7 +52,7 @@ class HomePageState extends State<HomePage> {
             icon: Icon(Icons.account_circle),
           )
         ],
-      ),
+      ),*/
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 8),
         child: _widgetOptions[_currentIndex],
@@ -77,7 +77,7 @@ class HomePageState extends State<HomePage> {
             BubbleBottomBarItem(backgroundColor: Colors.white, icon: Icon(Icons.home, color: Colors.white), title: Text(_pagesName[_currentIndex])),
             BubbleBottomBarItem(backgroundColor: Colors.white, icon: Icon(Icons.explore, color: Colors.white), title: Text(_pagesName[_currentIndex])),
             BubbleBottomBarItem(backgroundColor: Colors.white, icon: Icon(Icons.library_music, color: Colors.white), title: Text(_pagesName[_currentIndex])),
-            BubbleBottomBarItem(backgroundColor: Colors.white, icon: Icon(Icons.search, color: Colors.white), title: Text(_pagesName[_currentIndex])),
+            //BubbleBottomBarItem(backgroundColor: Colors.white, icon: Icon(Icons.search, color: Colors.white), title: Text(_pagesName[_currentIndex])),
           ]
       ),
     );
