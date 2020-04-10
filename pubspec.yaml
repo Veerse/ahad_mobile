@@ -76,6 +76,7 @@ flutter:
     - assets/images/profile/muslim_man.png
     - assets/images/profile/muslim_woman.png
     - assets/images/profile/exit.png
+    - assets/images/search/soon.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

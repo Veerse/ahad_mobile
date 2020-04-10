@@ -353,6 +353,7 @@ class RegisterPageState extends State<RegisterPage> {
                                   _isLoading = false;
                                 });
 
+                                globalKey.currentState.hideCurrentSnackBar();
                                 globalKey.currentState.showSnackBar(SnackBar(
                                   backgroundColor: Theme.of(context).hintColor,
                                   content: Text('Utilisateur ${u.email} créé'),
@@ -367,11 +368,13 @@ class RegisterPageState extends State<RegisterPage> {
                                   _isLoading = false;
                                 });
                                 if (e.toString().contains("409")){
+                                  globalKey.currentState.hideCurrentSnackBar();
                                   globalKey.currentState.showSnackBar(SnackBar(
                                     backgroundColor: Theme.of(context).hintColor,
                                     content: Text('Adresse email déjà utilisée 😦'),
                                   ));
                                 } else {
+                                  globalKey.currentState.hideCurrentSnackBar();
                                   globalKey.currentState.showSnackBar(SnackBar(
                                     backgroundColor: Theme.of(context).errorColor,
                                     content: Text('Impossible de joindre le serveur 😞'),
@@ -380,6 +383,7 @@ class RegisterPageState extends State<RegisterPage> {
                               });
 
                             } else {
+                              globalKey.currentState.hideCurrentSnackBar();
                               globalKey.currentState.showSnackBar(SnackBar(
                                 backgroundColor: Theme.of(context).hintColor,
                                 content: Text('Champs incorrects 😕'),
