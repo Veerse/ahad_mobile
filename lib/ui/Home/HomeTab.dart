@@ -10,6 +10,7 @@ import 'package:ahadmobile/ui/Common.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
@@ -60,7 +61,9 @@ class HomeTab extends StatelessWidget{
                   crossAxisAlignment: CrossAxisAlignment.start,
                   //mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    SizedBox(height: _sizedBoxHeight),
+                    SizedBox(height: 64),
+                    _ResumeAudio(audio: state.lastListenedAudio),
+                    _SeparationWidget(),
                     _FeaturedAudio(state.featuredAudio), // Featured Audio
                     _SeparationWidget(),
                     _Announcement(state.announcement), // Announcement
@@ -109,6 +112,69 @@ class _SeparationWidget extends StatelessWidget{
     );
   }
 }
+
+class _ResumeAudio extends StatefulWidget {
+  final Audio audio;
+  _ResumeAudio({this.audio});
+
+  @override
+  State<StatefulWidget> createState() => _ResumeAudioState(audio);
+
+}
+class _ResumeAudioState extends State<_ResumeAudio> {
+  final Audio audio;
+
+  _ResumeAudioState(this.audio);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text('Reprendre', style: Theme.of(context).textTheme.title),
+        SizedBox(height: 32),
+        Container(
+          height: 180,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.red,
+            image: DecorationImage(
+              image: NetworkImage('https://veerse.xyz/user/${audio.user.id}/cover'),
+              alignment: Alignment.lerp(Alignment.topCenter, Alignment.center, 0.2),
+              fit: BoxFit.cover,
+            ),
+            borderRadius: BorderRadius.circular(16.0)
+          ),
+          child: Opacity(
+            opacity: 0.9,
+            child: Column(
+              children: <Widget>[
+                SizedBox(height: 16),
+                Text('${audio.title}', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20)),
+                SizedBox(height: 4),
+                Expanded(
+                  child: IconButton(
+                    onPressed: () => print('play'),
+                    icon: Icon(Icons.play_arrow, size: 48),
+                    color: Colors.white,
+                  ),
+                ),
+                Slider(
+                  onChanged: (v) => null,
+                  activeColor: Colors.white,
+                  min:0,
+                  max: 100,
+                  value: 65,
+                ),
+              ],
+            ),
+          )
+        )
+      ],
+    );
+  }
+}
+
 
 class _FeaturedAudio extends StatelessWidget {
   final Audio featuredAudio;
@@ -232,89 +298,6 @@ class _RandomAudio extends StatelessWidget {
         Text('Au hasard', style: Theme.of(context).textTheme.title),
         SizedBox(height: _sizedBoxHeight),
         _AudioBoxItem(randomAudio)
-      ],
-    );
-  }
-}
-
-class _LastImamsAudios extends StatelessWidget{
-  final HomeBloc _homeBloc;
-  _LastImamsAudios(this._homeBloc);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text('Derniers audios de mes Imams', style: Theme.of(context).textTheme.title),
-        SizedBox(height: _sizedBoxHeight),
-        BlocBuilder<HomeBloc, HomeState>(
-          bloc: _homeBloc,
-          builder: (context, state){
-            if(state is HomeInitial){
-              return Text('Initial');
-            }
-            if(state is HomeLoaded){
-              return Container(
-                height: 170,
-                child: ListView.builder(
-                    physics: ClampingScrollPhysics(),
-                    shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                    itemCount: state.lastImamsAudios.length,
-                    itemBuilder: (BuildContext context, int index){
-                      return _AudioBoxItem(state.lastImamsAudios.elementAt(index));
-                    }
-                ),
-              );
-            } else{
-              return Text('na');
-            }
-          },
-        )
-      ],
-    );
-  }
-}
-
-class _LastMosquesAudios extends StatelessWidget{
-  final HomeBloc _homeTabBloc;
-  _LastMosquesAudios(this._homeTabBloc);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text('Derniers audios de mes Mosquees', style: Theme.of(context).textTheme.title),
-        SizedBox(height: _sizedBoxHeight),
-        BlocBuilder<HomeBloc, HomeState>(
-          bloc: _homeTabBloc,
-          builder: (context, state){
-            if(state is HomeInitial){
-              return Text('Initial');
-            }
-            if(state is HomeLoaded){
-              return Container(
-                height: 150,
-                child: ListView.builder(
-                    physics: ClampingScrollPhysics(),
-                    shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                    itemCount: state.lastImamsAudios.length,
-                    itemBuilder: (BuildContext context, int index){
-                      return Container(
-                        width: 150,
-                        child: _AudioBoxItem(state.lastImamsAudios.elementAt(index)),
-                      );
-                    }
-                ),
-              );
-            } else{
-              return Text('na');
-            }
-          },
-        )
       ],
     );
   }
