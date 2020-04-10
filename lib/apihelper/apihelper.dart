@@ -56,7 +56,6 @@ class APIHelper {
         var responseJson = json.decode(utf8.decode(response.bodyBytes));
         return responseJson;
       case 201:
-        //print('LONGUEUR DE LA MERDE ${response == null}');
         var responseJson = json.decode(utf8.decode(response.bodyBytes));
         return responseJson;
       case 400:

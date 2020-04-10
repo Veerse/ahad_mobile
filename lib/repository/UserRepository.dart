@@ -42,7 +42,6 @@ class UserRepository {
       throw e;
     });
     storage.write(key: "userid", value: "${User.fromJson(response).id}");
-    print('Response : $response');
     return User.fromJson(response);
   }
 

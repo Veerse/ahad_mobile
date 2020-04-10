@@ -18,12 +18,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState>{
       try{
         yield HomeLoading();
         var a = await _announcementRepository.fetchAnnouncement();
-        //var b = await _audioRepository.fetchLastImamsAudiosOfUser(event.userId);
-        var c = await _audioRepository.fetchFeaturedAudio();
-        var d = await _audioRepository.fetchRandomAudio();
-        var e = await _audioRepository.fetchLastListenedAudio(event.userId);
+        var b = await _audioRepository.fetchFeaturedAudio();
+        var c = await _audioRepository.fetchRandomAudio();
+        var d = await _audioRepository.fetchLastListenedAudio(event.userId);
+        var e = await _audioRepository.fetchLastCurrentlyPlayingAudiosOfUser(event.userId);
 
-        yield HomeLoaded(announcement: a, lastImamsAudios: null, lastMosquesAudios: null, featuredAudio: c, randomAudio: d, lastListenedAudio: e);
+        yield HomeLoaded(announcement: a, featuredAudio: b, randomAudio: c, lastListenedAudio: d, audiosToFinish: e);
         //yield HomeTabLoaded(announcement: a, lastImamsAudios: b, lastMosquesAudios: b, featuredAudio: c);
       } catch(error){
         yield HomeLoadFailure(e: error);

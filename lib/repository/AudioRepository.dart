@@ -137,6 +137,20 @@ class AudioRepository {
     }
   }
 
+  Future<List<Audio>> fetchLastCurrentlyPlayingAudiosOfUser(int userId) async {
+    final queryParameters = {
+      'userId': userId.toString(),
+    };
+    final uri = Uri.https('veerse.xyz', '/audio/lastlistening', queryParameters);
+    var response = await _apiHelper.request(uri.toString(), RequestType.GET_WITH_PARAMETERS);
+
+    if (response != null) {
+      return (response as List).map((i)=>Audio.fromJson(i)).toList();
+    } else {
+      return null;
+    }
+  }
+
   Future<List<Audio>> fetchToBeListenedAudiosOfUser(int userId) async {
     final queryParameters = {
       'userId': userId.toString(),

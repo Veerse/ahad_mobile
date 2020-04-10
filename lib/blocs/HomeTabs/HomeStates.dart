@@ -18,19 +18,18 @@ class HomeLoading extends HomeState{}
 
 class HomeLoaded extends HomeState{
   final Announcement announcement;
-  final List<Audio> lastImamsAudios;
-  final List<Audio> lastMosquesAudios;
   final Audio featuredAudio;
   final Audio randomAudio;
-  final Audio lastListenedAudio;
+  final Audio lastListenedAudio; // Resume
+  final List<Audio> audiosToFinish;
 
   const HomeLoaded({
     this.announcement,
-    this.lastImamsAudios,
-    this.lastMosquesAudios,
     this.featuredAudio,
     this.randomAudio,
-    this.lastListenedAudio});
+    this.lastListenedAudio,
+    this.audiosToFinish
+  });
 }
 
 class HomeLoadFailure extends HomeState{

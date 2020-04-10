@@ -1,4 +1,5 @@
 
+import 'package:ahadmobile/common/theme.dart';
 import 'package:ahadmobile/ui/Common.dart';
 import 'package:ahadmobile/ui/Home/ExploreTab.dart';
 import 'package:ahadmobile/ui/Home/HomeTab.dart';
@@ -49,9 +50,22 @@ class HomePageState extends State<HomePage> {
           )
         ],
       ),*/
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 8),
-        child: _widgetOptions[_currentIndex],
+      body: Container(
+
+        child: Stack(
+          children: <Widget>[
+            CustomPaint(
+              child: Container(
+                height: 300,
+              ),
+              painter: CurvePainter(),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8),
+              child: _widgetOptions[_currentIndex],
+            ),
+          ],
+        )
       ),
       /*floatingActionButton: FloatingActionButton(
         onPressed: (){

@@ -103,7 +103,6 @@ class MyApp extends StatelessWidget {
             return snapshot.data; // OnboardingPage or HomePage
           }
           if (snapshot.hasError){
-            print('Error caught on app startup : ${snapshot.error.toString()}');
             return LoginPage();
           }
           else {
