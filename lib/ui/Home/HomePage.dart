@@ -56,7 +56,7 @@ class HomePageState extends State<HomePage> {
           children: <Widget>[
             CustomPaint(
               child: Container(
-                height: 300,
+                height: Theme.of(context).brightness == ThemeData.dark().brightness ? 0:300,
               ),
               painter: CurvePainter(),
             ),
