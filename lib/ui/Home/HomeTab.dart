@@ -45,14 +45,14 @@ class HomeTab extends StatelessWidget{
               _homeTabBloc.add(FetchHome(userId: Provider.of<UserModel>(context, listen: false).user.id));
               return Center(
                 child: SpinKitFoldingCube(
-                  color: Colors.lightGreen,
+                  color: Theme.of(context).primaryColor,
                   size: 25.0,
                 ),
               );
             } else if (state is HomeLoading) {
               return Center(
                 child: SpinKitFoldingCube(
-                  color: Colors.lightGreen,
+                  color: Theme.of(context).primaryColor,
                   size: 25.0,
                 ),
               );
@@ -117,9 +117,24 @@ class _Greetings extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<UserModel>(
       builder: (context, user, child) {
-        return Column(
+        return Row(
           children: <Widget>[
-            Text('Bonjour, ${user.user.firstName}', style: Theme.of(context).textTheme.display1)
+            Expanded(
+              child: Text('Bonjour ${user.user.firstName}', style: Theme.of(context).textTheme.display1),
+            ),
+            GestureDetector(
+              onTap: () => Navigator.pushNamed(context, '/profile'),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: CircleAvatar(
+                  radius: 20,
+                  backgroundImage: Provider.of<UserModel>(context).user.isMale ?
+                  AssetImage("assets/images/profile/muslim_man.png")
+                      :
+                  AssetImage("assets/images/profile/muslim_man.png"),
+                ),
+              ),
+            )
           ],
         );
       }
@@ -166,24 +181,46 @@ class _ResumeAudioState extends State<_ResumeAudio> {
         children: <Widget>[
           Text('Reprendre', style: Theme.of(context).textTheme.title),
           SizedBox(height: 24),
-          Container(
-              height: 200,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                  color: Colors.red,
-                  image: DecorationImage(
-                    image: NetworkImage('https://veerse.xyz/user/${audio.user.id}/cover'),
-                    alignment: Alignment.lerp(Alignment.topCenter, Alignment.center, 0.2),
-                    fit: BoxFit.cover,
+          Stack(
+            children: <Widget>[
+              Container(
+                  height: 200,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                      color: Colors.red,
+                      image: DecorationImage(
+                        image: NetworkImage('https://veerse.xyz/user/${audio.user.id}/cover'),
+                        alignment: Alignment.lerp(Alignment.topCenter, Alignment.center, 0.2),
+                        fit: BoxFit.cover,
+                      ),
+                      borderRadius: BorderRadius.circular(16.0)
                   ),
-                  borderRadius: BorderRadius.circular(16.0)
               ),
-              child: Opacity(
-                opacity: 0.9,
+              Opacity(
+                opacity: 0.3,
+                child: Container(
+                  height: 200,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.black,
+                            Colors.transparent,
+                            Colors.black
+                          ]
+                      )
+                  ),
+                ),
+              ),
+              Container(
+                height: 200,
+                width: double.infinity,
                 child: Column(
                   children: <Widget>[
                     SizedBox(height: 16),
-                    Text('${audio.title}', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
+                    Text('${audio.title}', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 18)),
                     SizedBox(height: 4),
                     Expanded(
                       child: Consumer<AudioModel>(
@@ -209,6 +246,7 @@ class _ResumeAudioState extends State<_ResumeAudio> {
                   ],
                 ),
               )
+            ],
           )
         ],
       ),
@@ -296,7 +334,10 @@ class _Featured extends StatelessWidget {
                       SizedBox(height: 4),
                       Text('${audio.title}', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                       SizedBox(height: 4),
-                      Text('${audio.user.firstName} ${audio.user.lastName}', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w300)),
+                      GestureDetector(
+                        onTap: () => Navigator.pushNamed(context, '/explore/imam/details', arguments: audio.user),
+                        child: Text('${audio.user.firstName} ${audio.user.lastName}', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w300)),
+                      ),
                     ],
                   ),
                 ),
@@ -389,7 +430,10 @@ class _Random extends StatelessWidget {
                       SizedBox(height: 4),
                       Text('${audio.title}', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                       SizedBox(height: 4),
-                      Text('${audio.user.firstName} ${audio.user.lastName}', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w300)),
+                      GestureDetector(
+                        onTap: () => Navigator.pushNamed(context, '/explore/imam/details', arguments: audio.user),
+                        child: Text('${audio.user.firstName} ${audio.user.lastName}', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w300)),
+                      )
                     ],
                   ),
                 ),
@@ -507,7 +551,10 @@ class _AudioItem extends StatelessWidget {
                         SizedBox(height: 4),
                         Text('${audio.title}', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                         SizedBox(height: 4),
-                        Text('${audio.user.firstName} ${audio.user.lastName}', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w300)),
+                        GestureDetector(
+                          onTap: () => Navigator.pushNamed(context, '/explore/imam/details', arguments: audio.user),
+                          child: Text('${audio.user.firstName} ${audio.user.lastName}', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w300)),
+                        )
                       ],
                     ),
                   ),

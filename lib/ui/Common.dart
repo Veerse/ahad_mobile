@@ -81,20 +81,6 @@ class AudioItemList extends StatelessWidget {
   }
 }
 
-/*
-
-return Text.rich(
-                TextSpan(
-                  text: '${a.user.firstName} ${a.user.lastName} - ', // default text style
-                  children: <TextSpan>[
-                    ((a.length - snapshot.data.listening.position)/60).floor() <= 0  ? TextSpan(text: 'Terminé', style: TextStyle(fontWeight: FontWeight.bold)):TextSpan(),
-                    snapshot.data.listening.position != 0 && ((a.length - snapshot.data.listening.position)/60).floor() > 0 ? TextSpan(text: '${((a.length - snapshot.data.listening.position)/60).floor()} mn restantes'):TextSpan(),
-                    snapshot.data.listening.position == 0 ? TextSpan(text: '${printDuration(a.length)}'):TextSpan(),
-                  ],
-                ),
-              );
-
- */
 
 class _ListenLaterButton extends StatefulWidget {
   final bool isTbl;

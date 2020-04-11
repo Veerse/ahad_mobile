@@ -9,6 +9,7 @@ import 'package:ahadmobile/ui/Common.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:provider/provider.dart';
@@ -41,14 +42,14 @@ class ExploreTab extends StatelessWidget {
               _exploreBloc.add(FetchExplore(userId: Provider.of<UserModel>(context, listen: false).user.id));
               return Center(
                 child: SpinKitFoldingCube(
-                  color: Colors.lightGreen,
+                  color: Theme.of(context).primaryColor,
                   size: 25.0,
                 ),
               );
             } else if (state is ExploreLoading) {
               return Center(
                 child: SpinKitFoldingCube(
-                  color: Colors.lightGreen,
+                  color: Theme.of(context).primaryColor,
                   size: 25.0,
                 ),
               );
@@ -57,7 +58,9 @@ class ExploreTab extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    SizedBox(height: _sizedBoxHeight),
+                    SizedBox(height: 64),
+                    _SearchBar(),
+                    SizedBox(height: 32),
                     _Categories(state),
                     _SeparationWidget(),
                     _LastPostedAudios(state.allAudios),
@@ -86,6 +89,25 @@ class _SeparationWidget extends StatelessWidget{
         Divider(),
         SizedBox(height: _sizedBoxHeight),
       ],
+    );
+  }
+}
+
+class _SearchBar extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: FormBuilderTextField(
+        readOnly: true,
+        attribute: "search",
+        initialValue: "",
+        decoration: InputDecoration(
+          suffixIcon: Icon(Icons.search),
+          hintText: 'Rechercher un audio, un imam ou un thème',
+          hintStyle: Theme.of(context).textTheme.caption
+        ),
+      ),
     );
   }
 }

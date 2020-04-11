@@ -55,7 +55,8 @@ class LibraryTab extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    SizedBox(height: 16),
+                    SizedBox(height: 64),
+                    _SeparationWidget(),
                     _Categories(state),
                     _SeparationWidget(),
                     _LastOfUsersTags(state.lastOfUsersTags),
@@ -101,6 +102,7 @@ class _Categories extends StatelessWidget {
           child: ListTile(
             leading: Icon(Icons.av_timer),
             title: Text('A terminer'),
+            subtitle: Text('${_state.currentlyListeningOfUser.length} audios en cours d\'écoute'),
             trailing: Icon(Icons.navigate_next),
             onTap: () => Navigator.pushNamed(context, '/library/tofinish', arguments: _state.currentlyListeningOfUser),
           ),
@@ -109,6 +111,7 @@ class _Categories extends StatelessWidget {
           child: ListTile(
             leading: Icon(Icons.play_for_work),
             title: Text('A écouter'),
+            subtitle: Text('${_state.toBeListenedForUser.length} audios à écouter'),
             trailing: Icon(Icons.navigate_next),
             onTap: () => Navigator.pushNamed(context, '/library/tolisten', arguments: _state.toBeListenedForUser),
           ),
