@@ -178,4 +178,32 @@ class AudioRepository {
 
     await _apiHelper.request(uri.toString(), RequestType.DELETE_WITH_PARAMETERS);
   }
+
+  Future<List<Audio>> fetchTopAudiosOfImam(int imamId) async {
+    final queryParameters = {
+      'imamId': imamId.toString(),
+    };
+    final uri = Uri.https('veerse.xyz', '/audio/topimam', queryParameters);
+    var response = await _apiHelper.request(uri.toString(), RequestType.GET_WITH_PARAMETERS);
+
+    if (response != null) {
+      return (response as List).map((i)=>Audio.fromJson(i)).toList();
+    } else {
+      return null;
+    }
+  }
+
+  Future<List<Audio>> fetchTopAudiosOfTag(int tagId) async {
+    final queryParameters = {
+      'tagId': tagId.toString(),
+    };
+    final uri = Uri.https('veerse.xyz', '/audio/toptag', queryParameters);
+    var response = await _apiHelper.request(uri.toString(), RequestType.GET_WITH_PARAMETERS);
+
+    if (response != null) {
+      return (response as List).map((i)=>Audio.fromJson(i)).toList();
+    } else {
+      return null;
+    }
+  }
 }

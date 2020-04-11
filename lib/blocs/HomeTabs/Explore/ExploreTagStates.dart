@@ -19,10 +19,12 @@ class ExploreTagLoading extends ExploreTagState{}
 
 class ExploreTagLoaded extends ExploreTagState{
   final List<Audio> allAudios;
+  final List<Audio> topAudios;
   final Tag tag;
 
   const ExploreTagLoaded({
     this.allAudios,
+    this.topAudios,
     this.tag
   });
 }

@@ -17,8 +17,9 @@ class ExploreTagBloc extends Bloc<ExploreTagEvent, ExploreTagState>{
       try{
         yield ExploreTagLoading();
         var a = await _audioRepository.fetchAllAudiosOfTag(event.tag.id);
+        var b = await _audioRepository.fetchTopAudiosOfTag(event.tag.id);
 
-        yield ExploreTagLoaded(allAudios: a, tag: event.tag);
+        yield ExploreTagLoaded(allAudios: a, topAudios: b, tag: event.tag);
       } catch(error){
         yield ExploreTagLoadFailure(e: error);
       }

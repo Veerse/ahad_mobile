@@ -17,8 +17,9 @@ class ExploreImamBloc extends Bloc<ExploreImamEvent, ExploreImamState>{
       try{
         yield ExploreImamLoading();
         var a = await _audioRepository.fetchAllAudiosOfImam(event.imam.id);
+        var b = await _audioRepository.fetchTopAudiosOfImam(event.imam.id);
 
-        yield ExploreImamLoaded(allAudios: a, imam: event.imam);
+        yield ExploreImamLoaded(allAudios: a, topAudios: b, imam: event.imam);
       } catch(error){
         yield ExploreImamLoadFailure(e: error);
       }

@@ -94,6 +94,7 @@ class _SeparationWidget extends StatelessWidget{
 }
 
 class _SearchBar extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -103,9 +104,9 @@ class _SearchBar extends StatelessWidget {
         attribute: "search",
         initialValue: "",
         decoration: InputDecoration(
-          suffixIcon: Icon(Icons.search),
-          hintText: 'Rechercher un audio, un imam ou un thème',
-          hintStyle: Theme.of(context).textTheme.caption
+            suffixIcon: Icon(Icons.search),
+            hintText: 'Rechercher un audio, un imam ou un thème',
+            hintStyle: Theme.of(context).textTheme.caption
         ),
       ),
     );
@@ -206,7 +207,7 @@ class _AudioBoxItem extends StatelessWidget{
               ),
               border: Border.all(
                 color: Colors.grey,
-                width: 1,
+                width: 0.5,
               ),
               borderRadius: BorderRadius.circular(8),
             ),

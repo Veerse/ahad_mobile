@@ -19,10 +19,12 @@ class ExploreImamLoading extends ExploreImamState{}
 
 class ExploreImamLoaded extends ExploreImamState{
   final List<Audio> allAudios;
+  final List<Audio> topAudios;
   final User imam;
 
   const ExploreImamLoaded({
     this.allAudios,
+    this.topAudios,
     this.imam
   });
 }

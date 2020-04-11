@@ -153,7 +153,7 @@ class _LastOfUsersTags extends StatelessWidget {
               }
           ),
         ): Container(
-          height: 50,
+          height: 90,
           child: RichText(
             text: TextSpan(
                 style: Theme.of(context).textTheme.body1,
@@ -201,7 +201,7 @@ class _LastOfUsersImams extends StatelessWidget {
               }
           ),
         ):Container(
-          height: 50,
+          height: 90,
           child: RichText(
             text: TextSpan(
                 style: Theme.of(context).textTheme.body1,
