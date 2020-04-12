@@ -20,6 +20,7 @@ class ExploreBloc extends Bloc<ExploreEvent, ExploreState>{
     if(event is FetchExplore){
       try{
         yield ExploreLoading();
+        print('here');
         var a = await _audioRepository.fetchAllAudios();
         var b = await _tagRepository.fetchAllTags();
         var c = await _userRepository.fetchAllImams();

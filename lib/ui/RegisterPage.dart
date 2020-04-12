@@ -1,8 +1,11 @@
 
+import 'dart:convert';
+
 import 'package:ahadmobile/models/User.dart';
 import 'package:ahadmobile/providers/AudioModel.dart';
 import 'package:ahadmobile/providers/UserModel.dart';
 import 'package:ahadmobile/repository/UserRepository.dart';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -342,6 +345,10 @@ class RegisterPageState extends State<RegisterPage> {
                                 _isLoading = true;
                               });
 
+                              String pwd = _fbKey.currentState.value['pwd'].toString().trim();
+                              var pwdBytes = utf8.encode(pwd);
+                              String hashedPwd = sha512.convert(pwdBytes).toString();
+
                               User u = new User(
                                 firstName: _fbKey.currentState.value['firstname'].toString().trim(),
                                 lastName: _fbKey.currentState.value['lastname'].toString().trim(),
@@ -350,7 +357,7 @@ class RegisterPageState extends State<RegisterPage> {
                                 city: _fbKey.currentState.value['city'].toString().trim(),
                                 country: _fbKey.currentState.value['country'].toString().trim(),
                                 email: _fbKey.currentState.value['email'].toString().trim(),
-                                pwd: _fbKey.currentState.value['pwd'].toString().trim()
+                                pwd: hashedPwd
                               );
 
                               UserRepository().registerSignIn(u).then((User u){

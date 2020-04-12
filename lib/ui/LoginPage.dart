@@ -1,7 +1,10 @@
 
+import 'dart:convert';
+
 import 'package:ahadmobile/providers/AudioModel.dart';
 import 'package:ahadmobile/providers/UserModel.dart';
 import 'package:ahadmobile/repository/UserRepository.dart';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -143,10 +146,13 @@ class LoginPageState extends State<LoginPage> {
                         _isLoading = true;
                       });
 
-                      var email = _fbKey.currentState.value['email'].toString().trim();
-                      var pwd = _fbKey.currentState.value['pwd'].toString().trim();
+                      String pwd = _fbKey.currentState.value['pwd'].toString().trim();
+                      var pwdBytes = utf8.encode(pwd);
+                      String hashedPwd = sha512.convert(pwdBytes).toString();
 
-                      UserRepository().emailSignIn(email, pwd).then((u){
+                      var email = _fbKey.currentState.value['email'].toString().trim();
+
+                      UserRepository().emailSignIn(email, hashedPwd).then((u){
                         // AUTH SUCCESS
                         setState(() {
                           _isLoading = !_isLoading;
@@ -164,6 +170,7 @@ class LoginPageState extends State<LoginPage> {
                         //Navigator.pushReplacementNamed(context, "/home");
                         Navigator.pop(context);
                         Navigator.pushNamedAndRemoveUntil(context, '/home', (Route<dynamic> route) => false);
+
                       }).catchError((e){
                         // AUTH ERROR
                         setState(() {
