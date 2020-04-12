@@ -39,14 +39,14 @@ class LibraryTab extends StatelessWidget {
               _libraryBloc.add(FetchLibrary(userId: Provider.of<UserModel>(context, listen: false).user.id));
               return Center(
                 child: SpinKitFoldingCube(
-                  color: Colors.lightGreen,
+                  color: Theme.of(context).primaryColor,
                   size: 25.0,
                 ),
               );
             } else if (state is LibraryLoading) {
               return Center(
                 child: SpinKitFoldingCube(
-                  color: Colors.lightGreen,
+                  color: Theme.of(context).primaryColor,
                   size: 25.0,
                 ),
               );
@@ -102,7 +102,7 @@ class _Categories extends StatelessWidget {
           child: ListTile(
             leading: Icon(Icons.av_timer),
             title: Text('A terminer'),
-            subtitle: Text('${_state.currentlyListeningOfUser.length} audios en cours d\'écoute'),
+            subtitle: _state.currentlyListeningOfUser != null ? Text('${_state.currentlyListeningOfUser.length} audios en cours d\'écoute'):null,
             trailing: Icon(Icons.navigate_next),
             onTap: () => Navigator.pushNamed(context, '/library/tofinish', arguments: _state.currentlyListeningOfUser),
           ),
@@ -111,7 +111,7 @@ class _Categories extends StatelessWidget {
           child: ListTile(
             leading: Icon(Icons.play_for_work),
             title: Text('A écouter'),
-            subtitle: Text('${_state.toBeListenedForUser.length} audios à écouter'),
+            subtitle: _state.toBeListenedForUser != null ? Text('${_state.toBeListenedForUser.length} audios à écouter'):null,
             trailing: Icon(Icons.navigate_next),
             onTap: () => Navigator.pushNamed(context, '/library/tolisten', arguments: _state.toBeListenedForUser),
           ),

@@ -30,8 +30,13 @@ class AudioRepository {
     final uri = Uri.https('veerse.xyz', '/audio/lastlistened', queryParameters);
     print('uri :${uri.toString()}');
 
-    var response = await _apiHelper.request(uri.toString(), RequestType.GET_WITH_PARAMETERS);
-    return Audio.fromJson(response);
+    return await _apiHelper.request(uri.toString(), RequestType.GET_WITH_PARAMETERS).then((response){
+      print('ok');
+      return Audio.fromJson(response);
+    }).catchError((e){
+      print(e.toString());
+      return null;
+    });
   }
 
   Future<List<Audio>> fetchAllAudios() async {

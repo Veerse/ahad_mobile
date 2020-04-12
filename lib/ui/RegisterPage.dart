@@ -1,5 +1,6 @@
 
 import 'package:ahadmobile/models/User.dart';
+import 'package:ahadmobile/providers/AudioModel.dart';
 import 'package:ahadmobile/providers/UserModel.dart';
 import 'package:ahadmobile/repository/UserRepository.dart';
 import 'package:flutter/material.dart';
@@ -157,6 +158,7 @@ class RegisterPageState extends State<RegisterPage> {
                         children: <Widget>[
                           Flexible(
                             child: FormBuilderDateTimePicker(
+                              resetIcon: null,
                               readOnly: _isLoading ? true:false,
                               attribute: "birth",
                               inputType: InputType.date,
@@ -169,6 +171,9 @@ class RegisterPageState extends State<RegisterPage> {
                               lastDate: DateTime.now(),
                               maxLines: 1,
                               focusNode: _birthFocus,
+                              validators: [
+                                FormBuilderValidators.required(errorText: "Requis")
+                              ],
                             ),
                           ),
                           SizedBox(width: 16),
@@ -353,15 +358,17 @@ class RegisterPageState extends State<RegisterPage> {
                                   _isLoading = false;
                                 });
 
-                                globalKey.currentState.hideCurrentSnackBar();
-                                globalKey.currentState.showSnackBar(SnackBar(
-                                  backgroundColor: Theme.of(context).hintColor,
-                                  content: Text('Utilisateur ${u.email} créé'),
-                                ));
-
                                 Provider.of<UserModel>(context, listen: false).logIn(u);
+                                Provider.of<AudioModel>(context, listen: false).userId = u.id;
+                                // STORE EMAIL IN SHAREDPREF HERE
+                                /*var v = SharedPreferences.getInstance().then((i){
+                                    i.setString("email", email.toString().trim());
+                                    print('Stored');
+                                  }).catchError((e){
+                                    print('Impossible to store email in SharedPrefs ${e.toString()}');
+                                  });*/
 
-                                print(Provider.of<UserModel>(context, listen: false).getUser.firstName);
+                                Navigator.pushReplacementNamed(context, "/home");
 
                               }).catchError((e){
                                 setState(() {

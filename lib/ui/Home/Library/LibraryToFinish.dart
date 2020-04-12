@@ -54,7 +54,7 @@ class LibraryToFinish extends StatelessWidget {
                     children: [
                       TextSpan(text: 'Les audios commencés et '),
                       TextSpan(text: 'non terminés ', style: Theme.of(context).textTheme.body2,),
-                      TextSpan(text: 'apparaîtront automatiquement sur cette page.'),
+                      TextSpan(text: 'apparaîtront automatiquement sur cette page'),
                     ]
                 ),
               ),

@@ -65,8 +65,8 @@ class HomeTab extends StatelessWidget{
                     SizedBox(height: 64),
                     _Greetings(),
                     _SeparationWidget(),
-                    _ResumeAudio(audio: state.lastListenedAudio),
-                    _SeparationWidget(),
+                    state.lastListenedAudio != null ? _ResumeAudio(audio: state.lastListenedAudio):Container(),
+                    state.lastListenedAudio != null ? _SeparationWidget():Container(),
                     Row(
                       children: <Widget>[
                         Expanded(
@@ -79,8 +79,8 @@ class HomeTab extends StatelessWidget{
                       ],
                     ),
                     _SeparationWidget(),
-                    _AudiosToFinish(state.audiosToFinish),
-                    _SeparationWidget(),
+                    state.audiosToFinish != null ?_AudiosToFinish(state.audiosToFinish):Container(),
+                    state.audiosToFinish != null ? _SeparationWidget():Container(),
                     /*_Announcement(state.announcement), // Announcement
                     _SeparationWidget(),*/
                     SizedBox(height: _sizedBoxHeight*4),
@@ -131,7 +131,7 @@ class _Greetings extends StatelessWidget {
                   backgroundImage: Provider.of<UserModel>(context).user.isMale ?
                   AssetImage("assets/images/profile/muslim_man.png")
                       :
-                  AssetImage("assets/images/profile/muslim_man.png"),
+                  AssetImage("assets/images/profile/muslim_woman.png"),
                 ),
               ),
             )
@@ -161,10 +161,8 @@ class _ResumeAudioState extends State<_ResumeAudio> {
   @override
   void initState() {
     super.initState();
-    print('yo');
     if(audio != null) {
       AudioRepository().fetchListening(Provider.of<UserModel>(context, listen: false).user.id, audio.id).then((v){
-        print(v.position);
         setState(() {
           currentPosition = v.position.toDouble();
         });
@@ -187,7 +185,6 @@ class _ResumeAudioState extends State<_ResumeAudio> {
                   height: 200,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                      color: Colors.red,
                       image: DecorationImage(
                         image: NetworkImage('https://veerse.xyz/user/${audio.user.id}/cover'),
                         alignment: Alignment.lerp(Alignment.topCenter, Alignment.center, 0.2),
@@ -202,15 +199,16 @@ class _ResumeAudioState extends State<_ResumeAudio> {
                   height: 200,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.black,
-                            Colors.transparent,
-                            Colors.black
-                          ]
-                      )
+                    gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.black,
+                          Colors.transparent,
+                          Colors.black
+                        ]
+                    ),
+                    borderRadius: BorderRadius.circular(16.0)
                   ),
                 ),
               ),
@@ -278,7 +276,6 @@ class _Featured extends StatelessWidget {
                       //alignment: Alignment.lerp(Alignment.topCenter, Alignment.center, 0.2),
                       fit: BoxFit.cover,
                     ),
-                    color: Colors.red,
                     borderRadius: BorderRadius.circular(16)
                 ),
               ),
@@ -374,7 +371,6 @@ class _Random extends StatelessWidget {
                       //alignment: Alignment.lerp(Alignment.topCenter, Alignment.center, 0.2),
                       fit: BoxFit.cover,
                     ),
-                    color: Colors.red,
                     borderRadius: BorderRadius.circular(16)
                 ),
               ),
@@ -497,7 +493,7 @@ class _AudioItem extends StatelessWidget {
                         alignment: Alignment.lerp(Alignment.topCenter, Alignment.center, 0.2),
                         fit: BoxFit.cover,
                       ),
-                      color: Colors.red,
+
                       borderRadius: BorderRadius.circular(32)
                   ),
                 ),

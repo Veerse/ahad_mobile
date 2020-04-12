@@ -4,8 +4,10 @@ import 'package:ahadmobile/providers/UserModel.dart';
 import 'package:ahadmobile/repository/UserRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget{
   @override
@@ -17,9 +19,6 @@ class LoginPageState extends State<LoginPage> {
   final globalKey = GlobalKey<ScaffoldState>();
 
   final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
-
-  final _emailController = TextEditingController();
-  final _pwdController = TextEditingController();
 
   final _emailFocus = new FocusNode();
   final _pwdFocus = new FocusNode();
@@ -34,6 +33,7 @@ class LoginPageState extends State<LoginPage> {
   @protected
   void initState() {
     super.initState();
+
     _emailFocus.addListener(() {
       //print("email focus: ${_emailFocus.hasFocus}");
       setState(() {
@@ -68,11 +68,14 @@ class LoginPageState extends State<LoginPage> {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 32),
                 child: FormBuilder(
+                  initialValue: {
+                    //'email':'mailFromSharedPrefs'
+                  },
                   key: _fbKey,
                   child: Column(
                     children: <Widget>[
                       FormBuilderTextField(
-                        readOnly: _isLoading ? true:false,
+                        //readOnly: _isLoading ? true:false,
                         attribute: "email",
                         decoration: InputDecoration(
                           labelText: 'E-mail',
@@ -83,7 +86,6 @@ class LoginPageState extends State<LoginPage> {
                           _emailFocus.unfocus();
                           FocusScope.of(context).requestFocus(_pwdFocus);
                         },
-                        controller: _emailController,
                         focusNode: _emailFocus,
                         keyboardType: TextInputType.emailAddress,
                         validators: [
@@ -111,12 +113,11 @@ class LoginPageState extends State<LoginPage> {
                         maxLines: 1, // To allow obscuring password (maybe a bug ?)
                         textInputAction: TextInputAction.done,
                         onFieldSubmitted: (_){_pwdFocus.unfocus();},
-                        controller: _pwdController,
                         focusNode: _pwdFocus,
                         validators: [
                           FormBuilderValidators.required(errorText: "Requis BATARD")
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -152,6 +153,14 @@ class LoginPageState extends State<LoginPage> {
                         });
                         Provider.of<UserModel>(context, listen: false).logIn(u);
                         Provider.of<AudioModel>(context, listen: false).userId = u.id;
+                        // STORE EMAIL IN SHAREDPREF HERE
+                        /*var v = SharedPreferences.getInstance().then((i){
+                          i.setString("email", email.toString().trim());
+                          print('Stored');
+                        }).catchError((e){
+                          print('Impossible to store email in SharedPrefs ${e.toString()}');
+                        });*/
+
                         Navigator.pushReplacementNamed(context, "/home");
                       }).catchError((e){
                         // AUTH ERROR
@@ -204,8 +213,6 @@ class LoginPageState extends State<LoginPage> {
     super.dispose();
     _pwdFocus.dispose();
     _emailFocus.dispose();
-    _emailController.dispose();
-    _pwdController.dispose();
   }
 }
 

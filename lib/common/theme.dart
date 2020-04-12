@@ -34,6 +34,30 @@ class CurvePainter extends CustomPainter {
     }
 }
 
+class PlayerCurves extends CustomPainter {
+    @override
+    void paint(Canvas canvas, Size size) {
+        var paint = Paint();
+        paint.color = Colors.blueGrey[100];
+        paint.style = PaintingStyle.fill; // Change this to fill
+
+        var path = Path();
+
+        path.moveTo(0, size.height * 0.35);
+        path.quadraticBezierTo(
+            size.width / 2, size.height / 2, size.width, size.height * 0.35);
+        path.lineTo(size.width, 0);
+        path.lineTo(0, 0);
+
+        canvas.drawPath(path, paint);
+    }
+
+    @override
+    bool shouldRepaint(CustomPainter oldDelegate) {
+        return true;
+    }
+}
+
 class CurvePainter2 extends CustomPainter{
     @override
     void paint(Canvas canvas, Size size) {
