@@ -161,7 +161,9 @@ class LoginPageState extends State<LoginPage> {
                           print('Impossible to store email in SharedPrefs ${e.toString()}');
                         });*/
 
-                        Navigator.pushReplacementNamed(context, "/home");
+                        //Navigator.pushReplacementNamed(context, "/home");
+                        Navigator.pop(context);
+                        Navigator.pushNamedAndRemoveUntil(context, '/home', (Route<dynamic> route) => false);
                       }).catchError((e){
                         // AUTH ERROR
                         setState(() {

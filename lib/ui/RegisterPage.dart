@@ -368,7 +368,9 @@ class RegisterPageState extends State<RegisterPage> {
                                     print('Impossible to store email in SharedPrefs ${e.toString()}');
                                   });*/
 
-                                Navigator.pushReplacementNamed(context, "/home");
+                                //Navigator.pushReplacementNamed(context, "/home");
+                                Navigator.pop(context);
+                                Navigator.pushNamedAndRemoveUntil(context, '/home', (Route<dynamic> route) => false);
 
                               }).catchError((e){
                                 setState(() {
@@ -410,5 +412,17 @@ class RegisterPageState extends State<RegisterPage> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _firstNameFocus.dispose();
+    _lastNameFocus.dispose();
+    _birthFocus.dispose();
+    _cityFocus.dispose();
+    _pwdFocus.dispose();
+    _emailFocus.dispose();
+
   }
 }
