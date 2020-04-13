@@ -104,9 +104,10 @@ class AudioRepository {
 
   Future<List<Audio>> fetchLastAudioOfUsersImams(int userId) async {
     final queryParameters = {
-      'userId': userId.toString(),
+      'limit': 4.toString(),
+      'sort': 'audio_date_added'
     };
-    final uri = Uri.https('veerse.xyz', '/audio/lastimams', queryParameters);
+    final uri = Uri.https('veerse.xyz', '/user/$userId/imams/audios', queryParameters);
     var response = await _apiHelper.request(uri.toString(), RequestType.GET_WITH_PARAMETERS);
 
     if(response != null)
@@ -117,9 +118,10 @@ class AudioRepository {
 
   Future<List<Audio>> fetchLastAudioOfUsersTags(int userId) async {
     final queryParameters = {
-    'userId': userId.toString(),
+      'limit': 4.toString(),
+      'sort': 'audio_date_added'
     };
-    final uri = Uri.https('veerse.xyz', '/audio/lasttags', queryParameters);
+    final uri = Uri.https('veerse.xyz', '/user/$userId/tags/audios', queryParameters);
     var response = await _apiHelper.request(uri.toString(), RequestType.GET_WITH_PARAMETERS);
     if (response != null) {
       return (response as List).map((i)=>Audio.fromJson(i)).toList();

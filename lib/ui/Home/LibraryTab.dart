@@ -128,8 +128,8 @@ class _LastOfUsersTags extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (audios != null)
-      audios.sort((a, b) => a.audioDateAdded.compareTo(b.audioDateAdded));
+   /* if (audios != null)
+      audios.sort((a, b) => a.audioDateAdded.compareTo(b.audioDateAdded)); */
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -177,8 +177,8 @@ class _LastOfUsersImams extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (audios != null)
-      audios.sort((a, b) => a.audioDateAdded.compareTo(b.audioDateAdded));
+   /* if (audios != null)
+      audios.sort((a, b) => a.audioDateAdded.compareTo(b.audioDateAdded));*/
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
