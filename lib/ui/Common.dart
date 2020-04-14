@@ -252,4 +252,10 @@ class FloatingActionPlay extends StatelessWidget {
   }
 }
 
-
+void vibrate (FeedbackType feedbackType) {
+  Vibrate.canVibrate.then((v){
+    if (v == true){
+      Vibrate.feedback(feedbackType);
+    }
+  });
+}

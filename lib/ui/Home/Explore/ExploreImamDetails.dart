@@ -191,24 +191,21 @@ class _RandomButton extends StatelessWidget {
       sliver: SliverToBoxAdapter(
         child: GestureDetector(
           onTap: () {
-            Vibrate.canVibrate.then((v){
-              if (v == true){
-                Vibrate.feedback(FeedbackType.light);
-              }
-            });
+            vibrate(FeedbackType.light);
             final rand = new Random();
             var playingAudio = Provider.of<AudioModel>(context, listen: false).audio;
             Audio randAudio;
 
-            if (playingAudio != null) {
-              do
+            if(allAudios.length > 1) {
+              if (playingAudio != null) {
+                do
+                  randAudio = allAudios[rand.nextInt(allAudios.length)];
+                while (randAudio.id == playingAudio.id);
+              } else {
                 randAudio = allAudios[rand.nextInt(allAudios.length)];
-              while (randAudio.id == playingAudio.id);
-            } else {
-              randAudio = allAudios[rand.nextInt(allAudios.length)];
+              }
+              Provider.of<AudioModel>(context, listen: false).playOrPause(randAudio);
             }
-
-            Provider.of<AudioModel>(context, listen: false).playOrPause(randAudio);
           },
           child: Container(
             height: 48,
@@ -352,7 +349,10 @@ class _AudioBoxItem extends StatelessWidget{
             child: Consumer<AudioModel>(
               builder: (context, audioModel, child){
                 return IconButton(
-                  onPressed: () => audioModel.playOrPause(audio),
+                  onPressed: () {
+                    audioModel.playOrPause(audio);
+                    vibrate(FeedbackType.light);
+                  },
                   color: Colors.white,
                   icon: Icon(audioModel.audio != null && audioModel.audio.id == audio.id && audioModel.audioPlayer.state == AudioPlayerState.PLAYING ? Icons.pause:Icons.play_arrow),
                   iconSize: 50,
