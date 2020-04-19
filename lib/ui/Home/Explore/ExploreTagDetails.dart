@@ -29,14 +29,14 @@ class ExploreTagDetails extends StatelessWidget {
           exploreTagBloc.add(FetchExploreTag(userId: Provider.of<UserModel>(context, listen: false).user.id, tag: tag));
           return Center(
             child: SpinKitFoldingCube(
-              color: Colors.lightGreen,
+              color: Theme.of(context).primaryColor,
               size: 25.0,
             ),
           );
         } else if (state is ExploreTagLoading) {
           return Center(
             child: SpinKitFoldingCube(
-              color: Colors.lightGreen,
+              color: Theme.of(context).primaryColor,
               size: 25.0,
             ),
           );

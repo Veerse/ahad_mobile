@@ -46,22 +46,14 @@ class AudioRepository {
   }
 
   Future<List<Audio>> fetchAllAudiosOfTag(int tagId) async {
-    final queryParameters = {
-      'tagId': tagId.toString(),
-    };
-    final uri = Uri.https('veerse.xyz', '/audios', queryParameters);
-    var response = await _apiHelper.request(uri.toString(), RequestType.GET_WITH_PARAMETERS);
+    var response = await _apiHelper.request('/tag/$tagId/audios', RequestType.GET);
 
     List<Audio> audios = (response as List).map((i)=>Audio.fromJson(i)).toList();
     return audios;
   }
 
   Future<List<Audio>> fetchAllAudiosOfImam(int imamId) async {
-    final queryParameters = {
-      'imamId': imamId.toString(),
-    };
-    final uri = Uri.https('veerse.xyz', '/audios', queryParameters);
-    var response = await _apiHelper.request(uri.toString(), RequestType.GET_WITH_PARAMETERS);
+    var response = await _apiHelper.request('/user/$imamId/audios', RequestType.GET);
 
     List<Audio> audios = (response as List).map((i)=>Audio.fromJson(i)).toList();
     return audios;
@@ -188,9 +180,11 @@ class AudioRepository {
 
   Future<List<Audio>> fetchTopAudiosOfImam(int imamId) async {
     final queryParameters = {
-      'imamId': imamId.toString(),
+      'sort': 'top',
+      'limit': '3',
     };
-    final uri = Uri.https('veerse.xyz', '/audio/topimam', queryParameters);
+
+    final uri = Uri.https('veerse.xyz', '/user/$imamId/audios', queryParameters);
     var response = await _apiHelper.request(uri.toString(), RequestType.GET_WITH_PARAMETERS);
 
     if (response != null) {
@@ -202,9 +196,11 @@ class AudioRepository {
 
   Future<List<Audio>> fetchTopAudiosOfTag(int tagId) async {
     final queryParameters = {
-      'tagId': tagId.toString(),
+      'sort': 'top',
+      'limit': '3',
     };
-    final uri = Uri.https('veerse.xyz', '/audio/toptag', queryParameters);
+
+    final uri = Uri.https('veerse.xyz', '/tag/$tagId/audios', queryParameters);
     var response = await _apiHelper.request(uri.toString(), RequestType.GET_WITH_PARAMETERS);
 
     if (response != null) {

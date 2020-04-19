@@ -14,7 +14,7 @@ class LoadingPage extends StatelessWidget {
             //Text('Ahad', style: Theme.of(context).textTheme.display3),
             //SizedBox(height: 48),
             SpinKitFoldingCube(
-              color: Colors.lightGreen,
+              color: Theme.of(context).primaryColor,
               size: 50.0,
             )
           ],
