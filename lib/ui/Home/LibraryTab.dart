@@ -56,6 +56,7 @@ class LibraryTab extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     SizedBox(height: 64),
+                    _Header(),
                     _SeparationWidget(),
                     _Categories(state),
                     _SeparationWidget(),
@@ -87,6 +88,13 @@ class _SeparationWidget extends StatelessWidget{
         SizedBox(height: 16),
       ],
     );
+  }
+}
+
+class _Header extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Text('Librairie', style: Theme.of(context).textTheme.display1);
   }
 }
 

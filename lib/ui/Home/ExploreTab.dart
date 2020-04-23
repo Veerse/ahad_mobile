@@ -63,7 +63,7 @@ class ExploreTab extends StatelessWidget {
                     SizedBox(height: 32),
                     _Categories(state),
                     _SeparationWidget(),
-                    _LastPostedAudios(state.allAudios),
+                    _LastPostedAudios(state.lastAudiosAdded),
                     _SeparationWidget(),
                     SizedBox(height: 64),
                   ],
@@ -136,29 +136,19 @@ class _Categories extends StatelessWidget {
             trailing: Icon(Icons.navigate_next),
             onTap: () => Navigator.pushNamed(context, '/explore/tags', arguments: _state.allTags),
           ),
-        ),
-        Card(
-          child: ListTile(
-            leading: Icon(Icons.all_inclusive),
-            title: Text('Tous les audios'),
-            trailing: Icon(Icons.navigate_next),
-            onTap: () => Navigator.pushNamed(context, '/explore/all', arguments: _state.allAudios),
-          ),
-        ),
+        )
       ],
     );
   }
 }
 
 class _LastPostedAudios extends StatelessWidget {
-  final List<Audio> allAudios;
+  final List<Audio> audios;
 
-  _LastPostedAudios(this.allAudios);
+  _LastPostedAudios(this.audios);
 
   @override
   Widget build(BuildContext context) {
-    allAudios.sort((a, b) => b.audioDateAdded.compareTo(a.audioDateAdded));
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -175,7 +165,7 @@ class _LastPostedAudios extends StatelessWidget {
                 return Container(
                   width: 130,
                   margin: EdgeInsets.symmetric(horizontal: 16),
-                  child: _AudioBoxItem(allAudios.elementAt(index)),
+                  child: _AudioBoxItem(audios.elementAt(index)),
                 );
               }
           ),

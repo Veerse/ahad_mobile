@@ -21,11 +21,11 @@ class ExploreBloc extends Bloc<ExploreEvent, ExploreState>{
       try{
         yield ExploreLoading();
         print('here');
-        var a = await _audioRepository.fetchAllAudios();
+        var a = await _audioRepository.lastAudiosAdded();
         var b = await _tagRepository.fetchAllTags();
         var c = await _userRepository.fetchAllImams();
 
-        yield ExploreLoaded(allAudios: a, allTags: b, allImams: c);
+        yield ExploreLoaded(lastAudiosAdded: a, allTags: b, allImams: c);
       } catch(error){
         yield ExploreLoadFailure(e: error);
       }

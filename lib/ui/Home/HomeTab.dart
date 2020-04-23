@@ -140,8 +140,8 @@ class _Greetings extends StatelessWidget {
       }
     );
   }
-
 }
+
 
 class _ResumeAudio extends StatefulWidget {
   final Audio audio;
@@ -218,7 +218,107 @@ class _ResumeAudioState extends State<_ResumeAudio> {
                 child: Column(
                   children: <Widget>[
                     SizedBox(height: 16),
-                    Text('${audio.title}', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 18)),
+                    Text('${audio.title}', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 18), textAlign: TextAlign.center,),
+                    SizedBox(height: 4),
+                    Expanded(
+                      child: Consumer<AudioModel>(
+                        builder: (context, audioModel, child) {
+                          return IconButton(
+                            onPressed: () {
+                              vibrate(FeedbackType.light);
+                              audioModel.playOrPause(audio);
+                            },
+                            icon: Icon( audioModel.audio != null && audioModel.audio.id == audio.id && audioModel.audioPlayer.state == AudioPlayerState.PLAYING ? Icons.pause:Icons.play_arrow, size: 48),
+                            color: Colors.white,
+                          );
+                        },
+                      ),
+                    ),
+                    //SizedBox(height: 24),
+                    Text('${((audio.length - currentPosition)/60).floor()} minutes restantes', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w300, fontSize: 16)),
+                    SizedBox(height: 16)
+                  ],
+                ),
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}
+
+/*
+
+
+class _ResumeAudioState extends State<_ResumeAudio> {
+  final Audio audio;
+
+  double currentPosition = 0.0;
+
+  _ResumeAudioState(this.audio);
+
+  @override
+  void initState() {
+    super.initState();
+    if(audio != null) {
+      AudioRepository().fetchListening(Provider.of<UserModel>(context, listen: false).user.id, audio.id).then((v){
+        setState(() {
+          currentPosition = v.position.toDouble();
+        });
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onLongPress: () => showAudioDialog(context, audio),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text('Reprendre', style: Theme.of(context).textTheme.title),
+          SizedBox(height: 24),
+          Stack(
+            children: <Widget>[
+              Container(
+                  height: 200,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: NetworkImage('https://veerse.xyz/user/${audio.user.id}/cover'),
+                        alignment: Alignment.lerp(Alignment.topCenter, Alignment.center, 0.2),
+                        fit: BoxFit.cover,
+                      ),
+                      borderRadius: BorderRadius.circular(16.0)
+                  ),
+              ),
+              Opacity(
+                opacity: 0.3,
+                child: Container(
+                  height: 200,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.black,
+                          Colors.transparent,
+                          Colors.black
+                        ]
+                    ),
+                    borderRadius: BorderRadius.circular(16.0)
+                  ),
+                ),
+              ),
+              Container(
+                height: 200,
+                width: double.infinity,
+                child: Column(
+                  children: <Widget>[
+                    SizedBox(height: 16),
+                    Text('${audio.title}', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 18), textAlign: TextAlign.center,),
                     SizedBox(height: 4),
                     Expanded(
                       child: Consumer<AudioModel>(
@@ -251,6 +351,8 @@ class _ResumeAudioState extends State<_ResumeAudio> {
     );
   }
 }
+
+ */
 
 class _Featured extends StatelessWidget {
   final Audio audio;

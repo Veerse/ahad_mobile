@@ -25,22 +25,32 @@ class AudioRepository {
 
   Future<Audio> fetchLastListenedAudio(int userId) async{
     final queryParameters = {
-      'userId': userId.toString(),
+      'limit': 1.toString(),
+      'sort' : 'date',
     };
-    final uri = Uri.https('veerse.xyz', '/audio/lastlistened', queryParameters);
+    final uri = Uri.https('veerse.xyz', '/user/$userId/listenings', queryParameters);
     print('uri :${uri.toString()}');
 
     return await _apiHelper.request(uri.toString(), RequestType.GET_WITH_PARAMETERS).then((response){
       print('ok');
-      return Audio.fromJson(response);
+      // This endpoint returns a list. As we've set limit to 1, we will get
+      // only one audio, therefore we return the elementAt(0)
+      return (response as List).map((i)=>Audio.fromJson(i)).toList().elementAt(0);
     }).catchError((e){
       print(e.toString());
       return null;
     });
   }
 
-  Future<List<Audio>> fetchAllAudios() async {
-    var response = await _apiHelper.request("/audios", RequestType.GET);
+  Future<List<Audio>> lastAudiosAdded() async {
+    final queryParameters = {
+      'sort': 'date',
+      'limit': 5.toString(),
+    };
+
+    final uri = Uri.https('veerse.xyz', '/audios', queryParameters);
+    var response = await _apiHelper.request(uri.toString(), RequestType.GET_WITH_PARAMETERS);
+
     List<Audio> audios = (response as List).map((i)=>Audio.fromJson(i)).toList();
     return audios;
   }
@@ -123,11 +133,7 @@ class AudioRepository {
   }
 
   Future<List<Audio>> fetchCurrentlyPlayingAudiosOfUser(int userId) async {
-    final queryParameters = {
-      'userId': userId.toString(),
-    };
-    final uri = Uri.https('veerse.xyz', '/audio/listening', queryParameters);
-    var response = await _apiHelper.request(uri.toString(), RequestType.GET_WITH_PARAMETERS);
+    var response = await _apiHelper.request('/user/$userId/listenings', RequestType.GET);
 
     if (response != null) {
       return (response as List).map((i)=>Audio.fromJson(i)).toList();
@@ -138,9 +144,10 @@ class AudioRepository {
 
   Future<List<Audio>> fetchLastCurrentlyPlayingAudiosOfUser(int userId) async {
     final queryParameters = {
-      'userId': userId.toString(),
+      'limit': 4.toString(),
+      'order': 'position',
     };
-    final uri = Uri.https('veerse.xyz', '/audio/lastlistening', queryParameters);
+    final uri = Uri.https('veerse.xyz', '/user/$userId/listenings', queryParameters);
     var response = await _apiHelper.request(uri.toString(), RequestType.GET_WITH_PARAMETERS);
 
     if (response != null) {
