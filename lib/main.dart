@@ -50,7 +50,10 @@ class MyApp extends StatelessWidget {
   Future <Widget> authenticationCheck (BuildContext context) async {
     //storage.delete(key: "userid");
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    SharedPreferences prefs = await SharedPreferences.getInstance().catchError((e){
+      print('error : ${e.toString()}');
+    });
+
     //prefs.remove("onboarding");
     if (!prefs.containsKey("onboarding")){
       prefs.setBool("onboarding", true);

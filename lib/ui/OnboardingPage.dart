@@ -9,7 +9,7 @@ class OnBoardingPage extends StatelessWidget {
       title: "Bienvenue sur MUSLIMY",
       bodyWidget: Column(
         children: <Widget>[
-          Text('C\'est comme Spotify, mais pour des audios islamiques 🙃')
+          Text('C\'est comme Spotify, mais avec des audios islamiques 🙃')
         ],
       ),
       image: Center(
@@ -24,7 +24,7 @@ class OnBoardingPage extends StatelessWidget {
       bodyWidget: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: const [
-          Text("Khutbas, dourous, conférences, live de réseaux sociaux..."),
+          Text("Khutbas, dourous, conférences..."),
         ],
       ),
     ),
