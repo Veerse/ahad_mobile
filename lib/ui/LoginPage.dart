@@ -1,6 +1,8 @@
 
 import 'dart:convert';
+import 'dart:developer';
 
+import 'package:ahadmobile/models/Audio.dart';
 import 'package:ahadmobile/models/AudioInfo.dart';
 import 'package:ahadmobile/providers/AudioModel.dart';
 import 'package:ahadmobile/providers/UserModel.dart';
@@ -162,10 +164,11 @@ class LoginPageState extends State<LoginPage> {
                         Provider.of<UserModel>(context, listen: false).logIn(u);
 
                         // Retrieve last audio played with position
-                        AudioRepository().fetchLastListenedAudio().then((a) async {
+                        // Retrieve last audio played with position
+                        AudioRepository().fetchLastListenedAudio().then((a) {
                           if (a != null) {
-                            print(a.title);
                             Provider.of<AudioModel>(context, listen: false).audio = a;
+
                             /*await AudioRepository().fetchListening(a.id).then((Listening l) async {
                               await Provider.of<AudioModel>(context, listen: false).audioPlayer.setUrl("https://veerse.xyz/audio/${a.id}/download", isLocal: false).then((v){
                               }).catchError((e){
@@ -174,10 +177,12 @@ class LoginPageState extends State<LoginPage> {
                               Provider.of<AudioModel>(context, listen: false).audioPlayer.seek(new Duration(seconds: l != null ? l.position: 0));
                               Provider.of<AudioModel>(context, listen: false).audioPlayer.pause();
                             });*/
-                          }
-                        });
 
-                        Navigator.pushNamedAndRemoveUntil(context, '/home', (Route<dynamic> route) => false);
+                          }
+                          Navigator.pushNamedAndRemoveUntil(context, '/home', (Route<dynamic> route) => false);
+                        }).catchError((e){
+                          log('Error when fetching last listened audio for user ${u.id} : ${e.toString()}');
+                        });
 
                       }).catchError((e){
                         // AUTH ERROR

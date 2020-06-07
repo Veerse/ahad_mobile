@@ -10,6 +10,9 @@ class ExploreTags extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<Tag> allTags = ModalRoute.of(context).settings.arguments;
 
+    if (allTags != null)
+      allTags.sort((a, b) => a.tagName.compareTo(b.tagName));
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Themes'),

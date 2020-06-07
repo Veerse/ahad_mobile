@@ -6,6 +6,7 @@ import 'package:ahadmobile/models/Announcement.dart';
 import 'package:ahadmobile/models/Audio.dart';
 import 'package:ahadmobile/providers/AudioModel.dart';
 import 'package:ahadmobile/providers/UserModel.dart';
+import 'package:ahadmobile/repository/AudioRepository.dart';
 import 'package:ahadmobile/ui/Common.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
@@ -76,8 +77,8 @@ class HomeTab extends StatelessWidget{
                       ],
                     ),
                     _SeparationWidget(),
-                    state.audiosToFinish != null ?_AudiosToFinish(state.audiosToFinish):Container(),
-                    state.audiosToFinish != null ? _SeparationWidget():Container(),
+                    state.audiosToFinish.length != 0 ?_AudiosToFinish(state.audiosToFinish):Container(),
+                    state.audiosToFinish.length != 0 ? _SeparationWidget():Container(),
                     /*_Announcement(state.announcement), // Announcement
                     _SeparationWidget(),*/
                     SizedBox(height: _sizedBoxHeight*4),
@@ -451,7 +452,17 @@ class _AudiosToFinish extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text('Audios à terminer', style: Theme.of(context).textTheme.title),
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: Text('Audios à terminer', style: Theme.of(context).textTheme.title),
+            ),
+            GestureDetector(
+              child: Text('Voir tout', style: TextStyle(fontWeight: FontWeight.w600)),
+              onTap: () => Navigator.pushNamed(context, '/library/tofinish'),
+            )
+          ],
+        ),
         SizedBox(height: 24),
         Container(
           height: 250,
