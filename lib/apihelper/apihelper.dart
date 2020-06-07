@@ -71,6 +71,11 @@ class APIHelper {
       case 202:
         var responseJson = json.decode(utf8.decode(response.bodyBytes));
         return responseJson;
+      case 204:
+        // HTTP NO CONTENT
+        //var responseJson = json.decode(utf8.decode(response.bodyBytes));
+        //return responseJson;
+        break;
       case 400:
         throw BadRequestException(response.body.toString());
       case 401:

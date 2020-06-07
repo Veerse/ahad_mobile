@@ -71,7 +71,6 @@ class MyApp extends StatelessWidget {
         // Retrieve last audio played with position
         AudioRepository().fetchLastListenedAudio().then((a) async {
           if (a != null) {
-            print(a.title);
             Provider.of<AudioModel>(context, listen: false).audio = a;
             /*await AudioRepository().fetchListening(a.id).then((Listening l) async {
               await Provider.of<AudioModel>(context, listen: false).audioPlayer.setUrl("https://veerse.xyz/audio/${a.id}/download", isLocal: false).then((v){
@@ -82,6 +81,8 @@ class MyApp extends StatelessWidget {
               Provider.of<AudioModel>(context, listen: false).audioPlayer.pause();
             });*/
           }
+        }).catchError((e){
+          log('PB ${e.toString()}');
         });
 
         return HomePage();

@@ -15,7 +15,8 @@ import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-class LibraryTab extends StatelessWidget {
+
+class LibraryTab extends StatelessWidget{
   final RefreshController _refreshController = new RefreshController();
   final LibraryBloc _libraryBloc = new LibraryBloc();
 
@@ -58,7 +59,7 @@ class LibraryTab extends StatelessWidget {
                     SizedBox(height: 64),
                     _Header(),
                     _SeparationWidget(),
-                    _Categories(state),
+                    _Categories(),
                     _SeparationWidget(),
                     _LastOfUsersTags(state.lastOfUsersTags),
                     _SeparationWidget(),
@@ -99,8 +100,8 @@ class _Header extends StatelessWidget {
 }
 
 class _Categories extends StatelessWidget {
-  final LibraryLoaded _state;
-  _Categories(this._state);
+  //final LibraryLoaded _state;
+  _Categories();
 
   @override
   Widget build(BuildContext context) {
@@ -110,18 +111,18 @@ class _Categories extends StatelessWidget {
           child: ListTile(
             leading: Icon(Icons.av_timer),
             title: Text('A terminer'),
-            subtitle: _state.currentlyListeningOfUser != null ? Text('${_state.currentlyListeningOfUser.length} audios en cours d\'écoute'):null,
+            subtitle: Text('Audios en cours d\'écoute', ),
             trailing: Icon(Icons.navigate_next),
-            onTap: () => Navigator.pushNamed(context, '/library/tofinish', arguments: _state.currentlyListeningOfUser),
+            onTap: () => Navigator.pushNamed(context, '/library/tofinish'),
           ),
         ),
         Card(
           child: ListTile(
-            leading: Icon(Icons.play_for_work),
+            leading: Icon(Icons.library_add),
             title: Text('A écouter'),
-            subtitle: _state.toBeListenedForUser != null ? Text('${_state.toBeListenedForUser.length} audios à écouter'):null,
+            subtitle: Text('Audios à écouter plus tard'),
             trailing: Icon(Icons.navigate_next),
-            onTap: () => Navigator.pushNamed(context, '/library/tolisten', arguments: _state.toBeListenedForUser),
+            onTap: () => Navigator.pushNamed(context, '/library/tolisten'),
           ),
         ),
       ],
@@ -144,7 +145,7 @@ class _LastOfUsersTags extends StatelessWidget {
       children: <Widget>[
         Text('Récent de mes thèmes favoris', style: Theme.of(context).textTheme.title),
         SizedBox(height: 32),
-        audios != null ?
+        audios.length > 0 ?
         Container(
           height: 240,
           child: ListView.builder(
@@ -193,7 +194,7 @@ class _LastOfUsersImams extends StatelessWidget {
       children: <Widget>[
         Text('Récent de mes imams favoris', style: Theme.of(context).textTheme.title),
         SizedBox(height: 32),
-        audios != null ? Container(
+        audios.length > 0 ? Container(
           height: 240,
           child: ListView.builder(
               shrinkWrap: true,

@@ -19,12 +19,11 @@ class LibraryLoaded extends LibraryState {
 
   final List<Audio> lastOfUsersTags;
   final List<Audio> lastOfUsersImams;
-  final List<Audio> currentlyListeningOfUser;
-  final List<Audio> toBeListenedForUser;
+  //final List<Audio> currentlyListeningOfUser;
+  //final List<Audio> toBeListenedForUser;
 
 
-  const LibraryLoaded({this.lastOfUsersTags, this.lastOfUsersImams,
-    this.currentlyListeningOfUser, this.toBeListenedForUser});
+  const LibraryLoaded({this.lastOfUsersTags, this.lastOfUsersImams});
 }
 
 class LibraryLoadFailure extends LibraryState{
