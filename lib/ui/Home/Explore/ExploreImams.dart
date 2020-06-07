@@ -10,6 +10,9 @@ class ExploreImams extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<User> allImams = ModalRoute.of(context).settings.arguments;
 
+    if (allImams != null)
+      allImams.sort((a, b) => a.firstName.compareTo(b.firstName));
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Imams'),

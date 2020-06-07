@@ -80,7 +80,7 @@ class ProfilePage extends StatelessWidget {
                 child: Text('Déconnexion'),
               ),
               SizedBox(height: 32),
-              Text('Muslimy MVP (Minimum Viable Product)', style: Theme.of(context).textTheme.caption),
+              Text('Muslimy 0.1.0 - Released 2020-06-07', style: Theme.of(context).textTheme.caption),
               SizedBox(height: 16)
             ],
           ),

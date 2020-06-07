@@ -94,6 +94,9 @@ class AudioModel extends ChangeNotifier {
         log('Error when posting listening : ${e.toString()}');
         throw e;
       });
+      await audioRepository.deleteAudioQueueItem(_currentAudio.id).catchError((e){
+        print('Error when removing audio ${_currentAudio.id} from TBL for user ${UserModel().user.id} after completion (AudioModel.dart > _initializeAndPlay()');
+      });
       wipeAudio();
     });
 

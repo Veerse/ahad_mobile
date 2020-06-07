@@ -11,7 +11,7 @@ class CustomException implements Exception {
   }
 
   int GetCode() {
-    return 12;
+    return _httpCode;
   }
 
   int get httpCode => _httpCode;

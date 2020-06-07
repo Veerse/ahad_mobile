@@ -50,7 +50,10 @@ class MyApp extends StatelessWidget {
   Future <Widget> authenticationCheck (BuildContext context) async {
     //storage.delete(key: "userid");
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    SharedPreferences prefs = await SharedPreferences.getInstance().catchError((e){
+      print('error : ${e.toString()}');
+    });
+
     //prefs.remove("onboarding");
     if (!prefs.containsKey("onboarding")){
       prefs.setBool("onboarding", true);
@@ -68,7 +71,6 @@ class MyApp extends StatelessWidget {
         // Retrieve last audio played with position
         AudioRepository().fetchLastListenedAudio().then((a) async {
           if (a != null) {
-            print(a.title);
             Provider.of<AudioModel>(context, listen: false).audio = a;
             /*await AudioRepository().fetchListening(a.id).then((Listening l) async {
               await Provider.of<AudioModel>(context, listen: false).audioPlayer.setUrl("https://veerse.xyz/audio/${a.id}/download", isLocal: false).then((v){
@@ -79,6 +81,8 @@ class MyApp extends StatelessWidget {
               Provider.of<AudioModel>(context, listen: false).audioPlayer.pause();
             });*/
           }
+        }).catchError((e){
+          log('PB ${e.toString()}');
         });
 
         return HomePage();

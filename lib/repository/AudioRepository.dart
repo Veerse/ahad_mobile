@@ -147,7 +147,7 @@ class AudioRepository {
     final uri = Uri.https('veerse.xyz', '/user/$userId/imams/audios', queryParameters);
 
     return await _apiHelper.request(uri.toString(), RequestType.GET_WITH_PARAMETERS).then((r){
-      if(r == null) return null;
+      if(r == null) return new List<Audio>();
       return (r as List).map((i)=>Audio.fromJson(i)).toList();
     }).catchError((e){
       print('Error when fetching last audio of user $userId\'s imams : ${e.toString()}');
@@ -166,7 +166,7 @@ class AudioRepository {
     final uri = Uri.https('veerse.xyz', '/user/$userId/tags/audios', queryParameters);
 
     return await _apiHelper.request(uri.toString(), RequestType.GET_WITH_PARAMETERS).then((r){
-      if (r == null)  return null;
+      if (r == null) return new List<Audio>();
       return (r as List).map((i)=>Audio.fromJson(i)).toList();
     }).catchError((e){
       print('Error when fetching last audio of user $userId\'s tags : ${e.toString()}');
@@ -177,8 +177,14 @@ class AudioRepository {
   Future<List<Audio>> fetchCurrentlyPlayingAudiosOfUser() async {
     int userId = UserModel().user.id;
 
-    return await _apiHelper.request('/user/$userId/listenings/audios', RequestType.GET).then((r){
-      if(r == null) return null;
+    final queryParameters = {
+      'sort': 'position'
+    };
+
+    final uri = Uri.https('veerse.xyz', '/user/$userId/listenings/audios', queryParameters);
+
+    return await _apiHelper.request(uri.toString(), RequestType.GET_WITH_PARAMETERS).then((r){
+      if(r == null) return new List<Audio>();
       return (r as List).map((i)=>Audio.fromJson(i)).toList();
     }).catchError((e){
       log('Error when fetching currently playing audios of user $userId : ${e.toString()}');
@@ -196,7 +202,7 @@ class AudioRepository {
 
     final uri = Uri.https('veerse.xyz', '/user/$userId/listenings/audios', queryParameters);
     return await _apiHelper.request(uri.toString(), RequestType.GET_WITH_PARAMETERS).then((r){
-      if (r == null)  return null;
+      if (r == null)  return new List<Audio>();
       return (r as List).map((i)=>Audio.fromJson(i)).toList();
     }).catchError((e){
       log('Error when fetching last currently playing audios of user');
@@ -212,7 +218,7 @@ class AudioRepository {
 
     final uri = Uri.https('veerse.xyz', '/user/$userId/audioqueue/audios', queryParameters);
     return await _apiHelper.request(uri.toString(), RequestType.GET_WITH_PARAMETERS).then((r){
-      if (r == null)  return null;
+      if (r == null)  return new List<Audio>();
       return (r as List).map((i)=>Audio.fromJson(i)).toList();
     }).catchError((e){
       log('Error when fetching audios to be listenned by user $userId');

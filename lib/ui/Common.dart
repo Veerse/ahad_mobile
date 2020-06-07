@@ -57,7 +57,48 @@ class AudioItemList extends StatelessWidget {
                 );
               },
             ),
-            trailing: snapshot.hasData ? _ListenLaterButton(snapshot.data.isTbl, a.id):null,
+            //trailing: snapshot.hasData ? _ListenLaterButton(snapshot.data.isTbl, a.id):null,
+            trailing: PopupMenuButton(
+              itemBuilder: (_) => <PopupMenuItem<String>>[
+                new PopupMenuItem(
+                  child: const Text('Informations'),
+                  value: '1',
+                ),
+                new PopupMenuItem(
+                  child: const Text('A écouter plus tard'),
+                  value: '2',
+                )
+              ],
+              onSelected: (v) {
+
+                vibrate(FeedbackType.light);
+                if (v == '1')
+                  showAudioDialog(context, a);
+                if (v == '2')
+                  AudioRepository().postAudioQueueItem(new ListeningQueueItem(userId: Provider.of<UserModel>(context, listen: false).user.id, audioId: a.id)).then((_){
+                    print('OK');
+                    Scaffold.of(context).removeCurrentSnackBar();
+                    Scaffold.of(context).showSnackBar(new SnackBar(
+                      content: Text('Ajouté à votre playlist à écouter plus tard'),
+                      action: SnackBarAction(
+                        label: 'Voir',
+                        onPressed: () => Navigator.pushNamed(context, '/library/tolisten'),
+
+                      ),
+                    ));
+                  }).catchError((e){
+                    print('Already tbl');
+                    Scaffold.of(context).removeCurrentSnackBar();
+                    Scaffold.of(context).showSnackBar(new SnackBar(
+                      content: Text('Déjà dans votre playlist à écouter plus tard'),
+                      action: SnackBarAction(
+                        label: 'Voir',
+                        onPressed: () => Navigator.pushNamed(context, '/library/tolisten'),
+                      ),
+                    ));
+                  });
+              },
+            ),
             dense: true,
             title: Text (a.title),
             subtitle: Text.rich(
@@ -79,49 +120,6 @@ class AudioItemList extends StatelessWidget {
       )
     );
   }
-}
-
-
-class _ListenLaterButton extends StatefulWidget {
-  final bool isTbl;
-  final int audioId;
-  _ListenLaterButton(this.isTbl, this.audioId);
-
-  @override
-  State<StatefulWidget> createState() => _ListenLaterState(isTbl, audioId);
-
-}
-
-class _ListenLaterState extends State<_ListenLaterButton> {
-
-  final int audioId;
-  bool isTbl;
-
-  _ListenLaterState(this.isTbl, this.audioId);
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      onPressed: (){
-        Vibrate.canVibrate.then((v){
-          if (v == true){
-            Vibrate.feedback(FeedbackType.light);
-          }
-        });
-        setState(() {
-          if (isTbl) {
-            AudioRepository().deleteAudioQueueItem(audioId);
-            isTbl = false;
-          } else {
-            AudioRepository().postAudioQueueItem(new ListeningQueueItem(userId: Provider.of<UserModel>(context, listen: false).user.id, audioId: audioId));
-            isTbl = true;
-          }
-        });
-      },
-      icon: Icon(!isTbl ? Icons.add:Icons.play_for_work),
-    );
-  }
-
 }
 
 void showAudioDialog(context, Audio a) {

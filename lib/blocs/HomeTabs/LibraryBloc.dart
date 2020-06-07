@@ -18,11 +18,10 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState>{
         yield LibraryLoading();
         var a = await _audioRepository.fetchLastAudioOfUsersImams();
         var b = await _audioRepository.fetchLastAudioOfUsersTags();
-        var c = await _audioRepository.fetchToBeListenedAudiosOfUser();
-        var d = await _audioRepository.fetchCurrentlyPlayingAudiosOfUser();
+        //var c = await _audioRepository.fetchToBeListenedAudiosOfUser();
+        //var d = await _audioRepository.fetchCurrentlyPlayingAudiosOfUser();
 
-        //yield LibraryLoaded(lastOfUsersImams: a, lastOfUsersTags: b, toBeListenedForUser: c, currentlyListeningOfUser: d);
-        yield LibraryLoaded(lastOfUsersImams: a, lastOfUsersTags: b, toBeListenedForUser: c, currentlyListeningOfUser: d);
+        yield LibraryLoaded(lastOfUsersImams: a, lastOfUsersTags: b);
       } catch(error){
         yield LibraryLoadFailure(e: error);
       }
