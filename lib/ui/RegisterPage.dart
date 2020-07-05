@@ -197,7 +197,7 @@ class RegisterPageState extends State<RegisterPage> {
                                 ),
                                 DropdownMenuItem(
                                   child: Text('Helicoptere de combat'),
-                                  value: "euh",
+                                  value: "false",
                                 ),
                               ],
                               decoration: InputDecoration(
