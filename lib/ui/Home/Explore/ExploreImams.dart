@@ -65,17 +65,6 @@ class _ImamItem extends StatelessWidget {
                       fit: BoxFit.fitWidth
 
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      //color: Colors.red,
-                      blurRadius: 1.0, // soften the shadow
-                      spreadRadius: 0.5, //extend the shadow
-                      offset: Offset(
-                        1.5, // Move to right 1  horizontally
-                        1.5, // Move to bottom 1 Vertically
-                      ),
-                    )
-                  ],
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,

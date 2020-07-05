@@ -119,7 +119,7 @@ class LoginPageState extends State<LoginPage> {
                         onFieldSubmitted: (_){_pwdFocus.unfocus();},
                         focusNode: _pwdFocus,
                         validators: [
-                          FormBuilderValidators.required(errorText: "Requis BATARD")
+                          FormBuilderValidators.required(errorText: "Requis")
                         ],
                       ),
                     ],
